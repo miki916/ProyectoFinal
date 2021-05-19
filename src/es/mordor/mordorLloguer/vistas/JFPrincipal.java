@@ -24,20 +24,20 @@ public class JFPrincipal extends JFrame {
 	 */
 	public JFPrincipal() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 788, 530);
+		setBounds(100, 100, 936, 649);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		btnLogin = new JButton();
+		btnLogin = new JButton("");
 		btnLogin.setIcon(new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/login.png")));
 		menuBar.add(btnLogin);
 		
-		btnLogOut = new JButton();
+		btnLogOut = new JButton("");
 		btnLogOut.setIcon(new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/logout.png")));
 		menuBar.add(btnLogOut);
 		
-		btnEmpleados = new JButton();
+		btnEmpleados = new JButton("Empleados");
 		btnEmpleados.setIcon(new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/employe.png")));
 		menuBar.add(btnEmpleados);
 		contentPane = new JPanel();

@@ -1,5 +1,6 @@
 package es.mordor.mordorLloguer.controladores;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ExecutionException;
@@ -8,16 +9,18 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-import es.mordor.morderLloguer.model.BBDD.AlmacenDatosDB;
-import es.mordor.mordorLloguer.vistas.JFPrincipal;
-import es.mordor.mordorLloguer.vistas.JIFLogin;
+import es.mordor.morderLloguer.model.BBDD.*;
+import es.mordor.mordorLloguer.vistas.*;
+
 
 
 public class ControladorPrincipal implements ActionListener{
 	
-	public static JFPrincipal vistaPrincipal;
-	public JIFLogin vistaLogin;
-	public AlmacenDatosDB almacenDatos;
+	private static JFPrincipal vistaPrincipal;
+	private JIFLogin vistaLogin;
+	private AlmacenDatosDB almacenDatos;
+	private JIFEmpleados vistaEmpleados;
+	private ControladorEmpleados controladorEmpleados;
 	
 	public ControladorPrincipal(JFPrincipal vistaPrincipal, AlmacenDatosDB almacenDatos ) {
 		
@@ -32,12 +35,17 @@ public class ControladorPrincipal implements ActionListener{
 	
 	private void incializar() {
 		// TODO Auto-generated method stub
-		
+		vistaPrincipal.getBtnLogOut().setEnabled(false);
+		vistaPrincipal.getBtnEmpleados().setEnabled(false);
+
 		vistaPrincipal.getBtnLogin().addActionListener(this);
 		vistaPrincipal.getBtnLogOut().addActionListener(this);
+		vistaPrincipal.getBtnEmpleados().addActionListener(this);
+
 		
 		vistaPrincipal.getBtnLogin().setActionCommand("AbrirLogin");
 		vistaPrincipal.getBtnLogOut().setActionCommand("Logout");
+		vistaPrincipal.getBtnEmpleados().setActionCommand("AbrirEmpleados");
 
 		
 		
@@ -70,15 +78,50 @@ public class ControladorPrincipal implements ActionListener{
 			
 			logout();
 			
+		}else if(command == "AbrirEmpleados") {
+			
+			abrirEmpleados();
+			
 		}
 		
 		
 	}
 
 
-	private void logout() {
+	private void abrirEmpleados() {
 		// TODO Auto-generated method stub
 		
+		if(!open(vistaEmpleados)) {
+			
+			vistaEmpleados=new JIFEmpleados();
+			controladorEmpleados = new ControladorEmpleados(vistaEmpleados,almacenDatos);
+			controladorEmpleados.go();
+		
+		}else {
+			JOptionPane.showMessageDialog(vistaPrincipal, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
+			
+		}
+		
+		
+	}
+
+
+
+	private void logout() {
+		// TODO Auto-generated method stub
+					
+			vistaPrincipal.getBtnEmpleados().setEnabled(false);
+			vistaPrincipal.getBtnLogOut().setEnabled(false);
+			vistaPrincipal.getBtnLogin().setEnabled(true);
+			
+			if(open(vistaEmpleados)) {
+				
+				removeJIF(vistaEmpleados);
+				
+			}
+			
+			JOptionPane.showMessageDialog(vistaPrincipal, "Sesion finalizada con exito", "Succes", JOptionPane.INFORMATION_MESSAGE);
+				
 	}
 
 
@@ -117,7 +160,7 @@ public class ControladorPrincipal implements ActionListener{
 						vistaPrincipal.getBtnEmpleados().setEnabled(true);
 						vistaPrincipal.getBtnLogin().setEnabled(false);
 						vistaPrincipal.getBtnLogOut().setEnabled(true);
-						JOptionPane.showMessageDialog(vistaPrincipal, "Login correcto", "Succes", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(vistaPrincipal, "Sesion iniciada con exito", "Succes", JOptionPane.INFORMATION_MESSAGE);
 						vistaLogin.doDefaultCloseAction();
 						
 					}else {
@@ -145,9 +188,9 @@ public class ControladorPrincipal implements ActionListener{
 	private void abrirLogin() {
 		// TODO Auto-generated method stub
 		
-		if(!isOpen(vistaLogin)) {
+		if(!open(vistaLogin)) {
 			vistaLogin=new JIFLogin();
-			addInternalFrame(vistaLogin);
+			addJIF(vistaLogin);
 			
 			vistaLogin.getBtnLogin().addActionListener(this);
 			vistaLogin.getBtnLogin().setActionCommand("Login");
@@ -159,14 +202,26 @@ public class ControladorPrincipal implements ActionListener{
 		
 	}
 	
-	static void addInternalFrame(JInternalFrame jif) {
+	public static void center(JInternalFrame jif) {
+		Dimension deskSize=vistaPrincipal.getDesktopPane().getSize();
+		Dimension ifSize=jif.getSize();
+		jif.setLocation((deskSize.width - ifSize.width) / 2,(deskSize.height-ifSize.height)/ 2);
+	}
+
+	
+	static void addJIF(JInternalFrame jif) {
 		vistaPrincipal.getDesktopPane().add(jif);
-		//centrar(jif);
+		center(jif);
 		jif.setVisible(true);
 		
 	}
 	
-	public boolean isOpen(JInternalFrame jif) {
+	static void removeJIF(JInternalFrame jif) {
+		
+		jif.dispose();
+	}
+	
+	public boolean open(JInternalFrame jif) {
 		boolean existe=false;
 		JInternalFrame[] frames= vistaPrincipal.getDesktopPane().getAllFrames();
 		for(JInternalFrame frame:frames)

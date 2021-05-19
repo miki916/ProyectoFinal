@@ -5,6 +5,9 @@ import java.util.ArrayList;
 
 public interface AlmacenDatosDB {
 	
+	public static final int ASCENDING = 1;
+	public static final int DESCENDING = 2;
+	
 	public ArrayList<Empleado> getEmpleados();
 	public ArrayList<Empleado> getEmpleadosPorCP(String cp);
 	public ArrayList<Empleado> getEmpleadosPorCargo(String cargo);

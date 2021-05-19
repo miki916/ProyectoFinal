@@ -46,11 +46,44 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return empleados;
 	}
 	
+	public ArrayList<Empleado> getCustomEmpleadosOrdenados(String orderBy) {
+
+		ArrayList<Empleado> empleados = new ArrayList<Empleado>();
+
+		DataSource ds = MyDataSource.getOracleDataSource();
+
+		String query = "SELECT * FROM EMPLEADO";
+
+		if (orderBy != null)
+			query += " ORDER BY " + orderBy;
+
+		try (Connection con = ds.getConnection();
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+
+			Empleado empleado;
+
+			while (rs.next()) {
+				empleado = new Empleado(rs.getInt("idEmpleado"), rs.getString("DNI"), rs.getString("nombre"),
+						rs.getString("apellidos"), rs.getString("CP"), rs.getString("email"), rs.getDate("fechaNac"),
+						rs.getString("cargo"), rs.getString("domicilio"),rs.getString("password"));
+
+				empleados.add(empleado);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return empleados;
+	}
+	
 	@Override
 	public boolean authenticate (String login,String password) {
 		boolean registrado=false;
 		DataSource ds = MyDataSource.getOracleDataSource();
-		String query = "SELECT COUNT(*) FROM EMPLEADO WHERE DNI=? AND PASSWORD=?";
+		String query = "SELECT COUNT(*) FROM EMPLEADO WHERE DNI=? AND PASSWORD=ENCRYPT_PASWD.encrypt_val(?)";
 		try (Connection con = ds.getConnection();
 				PreparedStatement pstmt = con.prepareStatement(query);
 				){
@@ -118,7 +151,21 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	@Override
 	public ArrayList<Empleado> getEmpleadosOrdenadosBy(String field, int sort) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		String order = "";
+		
+		if(sort == AlmacenDatosDB.ASCENDING) {
+			
+			order = "ASC";
+			
+		}else if( sort == AlmacenDatosDB.DESCENDING)
+			
+			order = "DESC";
+			
+			
+		
+		
+		return getCustomEmpleadosOrdenados(field + " " + order);
 	}
 
 }
