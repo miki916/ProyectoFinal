@@ -14,6 +14,7 @@ public class Empleado {
 	private String cargo;
 	private String domicilio;
 	private String password;
+	
 	public Empleado(int idEmpleado, String dNI, String nombre, String apellidos, String cP, String email, Date fechaNac,
 			String cargo, String domicilio, String password) {
 		super();

@@ -221,7 +221,7 @@ public class ControladorPrincipal implements ActionListener{
 		jif.dispose();
 	}
 	
-	public boolean open(JInternalFrame jif) {
+	public static boolean open(JInternalFrame jif) {
 		boolean existe=false;
 		JInternalFrame[] frames= vistaPrincipal.getDesktopPane().getAllFrames();
 		for(JInternalFrame frame:frames)

@@ -1,5 +1,6 @@
 package es.mordor.morderLloguer.model.BBDD;
 
+import java.sql.Date;
 import java.util.ArrayList;
 
 
@@ -12,6 +13,7 @@ public interface AlmacenDatosDB {
 	public ArrayList<Empleado> getEmpleadosPorCP(String cp);
 	public ArrayList<Empleado> getEmpleadosPorCargo(String cargo);
 	public Empleado getEmpleadoPorDNI(String dni);
+	public boolean addEmpleado(String[] data);
 	public boolean updateEmpleado(Empleado empleado); 
 	public boolean deleteEmpleado(String dni);
 	public boolean authenticate (String login,String password);

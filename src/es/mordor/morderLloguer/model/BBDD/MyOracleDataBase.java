@@ -1,6 +1,7 @@
 package es.mordor.morderLloguer.model.BBDD;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +13,39 @@ import javax.sql.DataSource;
 
 
 public class MyOracleDataBase implements AlmacenDatosDB {
+	
+	
+	public boolean addEmpleado(String[] data) {
+		
+		boolean añadido = false;
+		
+
+		DataSource ds = MyDataSource.getOracleDataSource();
+
+		try (Connection con = ds.getConnection();
+				Statement stmt = con.createStatement();){
+			
+			
+			String query = "insert into empleado(DNI, nombre, apellidos, domicilio, CP, email, fechaNac, cargo, password) VALUES"
+                    + "('"+ data[0] +"','" + data[1] +"', '"+ data[2] +"', '"+ data[3] +"', '"+ data[4] +"', '"+data[5]+"', TO_DATE('"+ data[6] +"','yyyy/mm/dd'), '"+data[7]+"',ENCRYPT_PASWD.encrypt_val("+data[8]+"))";
+
+			
+			System.out.println(query);
+			
+			if(stmt.executeUpdate(query)==1)
+				añadido=true;
+		
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+			return false;
+			
+		}
+		
+		
+		return añadido;
+		
+	}
 	
 	public ArrayList<Empleado> getCustomEmpleados(String where) {
 
@@ -79,8 +113,11 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return empleados;
 	}
 	
+
+	
 	@Override
 	public boolean authenticate (String login,String password) {
+		
 		boolean registrado=false;
 		DataSource ds = MyDataSource.getOracleDataSource();
 		String query = "SELECT COUNT(*) FROM EMPLEADO WHERE DNI=? AND PASSWORD=ENCRYPT_PASWD.encrypt_val(?)";
@@ -136,14 +173,63 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 
 	@Override
 	public boolean updateEmpleado(Empleado empleado) {
-		// TODO Auto-generated method stub
-		return false;
+
+		boolean actualizado = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+
+		try (Connection con = ds.getConnection();
+				Statement stmt = con.createStatement();){
+	
+			String query = "UPDATE EMPLEADO SET nombre='" + empleado.getNombre() + "', " +
+												"apellidos='" + empleado.getApellidos() + "'," + 
+												((empleado.getDomicilio()!=null)?"domicilio='" + empleado.getDomicilio() + "',":"") + 
+												((empleado.getCP()!=null)?"CP='"	+ empleado.getCP() + "',":"") + 
+												"email='" + empleado.getEmail() + "'," + 
+												"fechaNac=TO_DATE('" + empleado.getFechaNac() + "','yyyy-mm-dd')," + 
+												"cargo='" + empleado.getCargo() + "' " + 
+												"WHERE DNI='" + empleado.getDNI() + "'";
+			
+			System.out.println(query);
+			
+			if(stmt.executeUpdate(query)==1)
+				actualizado=true;
+		
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+
+		}
+		
+				
+		return actualizado;
 	}
 
 	@Override
 	public boolean deleteEmpleado(String dni) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		boolean eliminado = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+
+		try (Connection con = ds.getConnection();
+				Statement stmt = con.createStatement();){
+	
+			String query = "DELETE FROM EMPLEADO WHERE DNI= '" + dni + "'";
+			
+			System.out.println(query);
+			
+			if(stmt.executeUpdate(query)==1)
+				eliminado=true;
+		
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+
+		}
+		
+				
+		return eliminado;
 	}
 
 	

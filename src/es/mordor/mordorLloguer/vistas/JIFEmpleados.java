@@ -119,18 +119,9 @@ public class JIFEmpleados extends JInternalFrame {
 
 	}
 
-
-
-
-
-
 	public JMenuItem getMntmAddRow() {
 		return mntmAddRow;
 	}
-
-
-
-
 
 
 	public JMenuItem getMntmDeleteRow() {
@@ -138,17 +129,9 @@ public class JIFEmpleados extends JInternalFrame {
 	}
 
 
-
-
-
-
 	public JPopupMenu getPopupMenu() {
 		return popupMenu;
 	}
-
-
-
-
 
 
 	public JButton getBtnAdd() {
@@ -156,17 +139,9 @@ public class JIFEmpleados extends JInternalFrame {
 	}
 
 
-
-
-
-
 	public JButton getBtnRemove() {
 		return btnRemove;
 	}
-
-
-
-
 
 
 	public WebTable getTable() {
@@ -174,11 +149,9 @@ public class JIFEmpleados extends JInternalFrame {
 	}
 
 
-
 	public JComboBox getComboBoxOrder() {
 		return comboBoxOrder;
 	}
-
 
 
 	public JComboBox getComboBoxSort() {
