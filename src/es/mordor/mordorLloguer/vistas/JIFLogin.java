@@ -7,9 +7,11 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import com.alee.extended.image.WebImage;
 import com.alee.laf.text.WebPasswordField;
 import com.alee.laf.text.WebTextField;
 
@@ -48,15 +50,15 @@ public class JIFLogin extends JInternalFrame {
 		panelCentral.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 30));
 		
 		textFieldUser = new WebTextField();
-		textFieldUser.setInputPrompt("Username");
+		textFieldUser.setInputPrompt("  Username");
 		textFieldUser.setToolTipText("");
-		textFieldUser.setHorizontalAlignment(SwingConstants.CENTER);
+		textFieldUser.setLeadingComponent ( new WebImage(new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/username.png"))));
 		panelCentral.add(textFieldUser);
 		textFieldUser.setColumns(30);
 		
 		textFieldPassword = new WebPasswordField();
-		textFieldPassword.setInputPrompt("Password");
-		textFieldPassword.setHorizontalAlignment(SwingConstants.CENTER);
+		textFieldPassword.setInputPrompt("  Password");
+		textFieldPassword.setLeadingComponent ( new WebImage(new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/candado.png"))));
 		panelCentral.add(textFieldPassword);
 		textFieldPassword.setColumns(30);
 		

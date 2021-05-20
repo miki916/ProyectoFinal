@@ -38,7 +38,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		} catch (SQLException e) {
 			
 			e.printStackTrace();
-			return false;
+
 			
 		}
 		

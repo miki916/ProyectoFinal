@@ -92,61 +92,65 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 	private boolean newEmpleado() {
 		// TODO Auto-generated method stub
 		
-		String DNI = vistaAddEmpleados.getTextFieldDNI().getText();
-		String name = vistaAddEmpleados.getTextFieldNombre().getText();
-		String apellidos = vistaAddEmpleados.getTextFieldApellidos().getText();
+		String DNI = vistaAddEmpleados.getTextFieldDni().getText();
+		String name = vistaAddEmpleados.getTextFieldName().getText();
+		String apellidos = vistaAddEmpleados.getTextFieldSurname().getText();
 		String CP = vistaAddEmpleados.getTextFieldCP().getText();
 		String email = vistaAddEmpleados.getTextFieldEmail().getText();
-		String fecha = vistaAddEmpleados.getDatetextField().getDate().toString();
-		String cargo = (String) vistaAddEmpleados.getComboBoxCargo().getSelectedItem();
-		String domicilio = vistaAddEmpleados.getTextFieldDomicilio().getText();
-		String password = String.valueOf(vistaAddEmpleados.getTextFieldContraseña().getPassword());
+		String fecha = vistaAddEmpleados.getDateTextField().getDate().toString();
+		String cargo = (String) vistaAddEmpleados.getComboBox().getSelectedItem();
+		String domicilio = vistaAddEmpleados.getTextFieldAddress().getText();
+		String password = String.valueOf(vistaAddEmpleados.getTextFieldPassword().getPassword());
 		
-		String[] data = {DNI,name,apellidos,domicilio,CP,email,fecha,cargo,password};
+		boolean error = false;		
 		
-	
-		if(almacenDatos.addEmpleado(data))	{
+				
+			String[] data = {DNI,name,apellidos,domicilio,CP,email,fecha,cargo,password};
 			
-			vistaAddEmpleados.dispose();
+		
+			if(almacenDatos.addEmpleado(data))	{
+				
+				vistaAddEmpleados.dispose();
+				error = true;
+				sort();
+				
+			}else
+				JOptionPane.showMessageDialog(vistaAddEmpleados, "Este empleado ya existe", "Error", JOptionPane.ERROR_MESSAGE);
 			
-		}else
-			JOptionPane.showMessageDialog(vistaAddEmpleados, "Could not add Employee", "Error", JOptionPane.ERROR_MESSAGE);
+			
 	
-		return false;
+		
+		return error;
 		
 		
 	}
 
 	private void removeRow() {
-				
 		
+		int row = vistaEmpleados.getTable().getSelectedRow();
+		String dni = vistaEmpleados.getTable().getValueAt(row, 0).toString();
+		almacenDatos.deleteEmpleado(dni);
+		
+		sort();
 	}
 
 	private void openAddEmpleado() {
-		
-		
-		
+				
 		if(!ControladorPrincipal.open(vistaAddEmpleados)) {
 			vistaAddEmpleados=new JFAddEmpleado();
 			ControladorPrincipal.addJIF(vistaAddEmpleados);
 			
 			vistaAddEmpleados.getBtnCancel().addActionListener(this);
-			vistaAddEmpleados.getBtnNewEmpleado().addActionListener(this);
+			vistaAddEmpleados.getBtnAdd().addActionListener(this);
 
-			vistaAddEmpleados.getBtnNewEmpleado().setActionCommand("Add");
+			vistaAddEmpleados.getBtnAdd().setActionCommand("Add");
 			vistaAddEmpleados.getBtnCancel().setActionCommand("Cancel");
 				
 				
-		}else {
-			
+		}else 			
 			JOptionPane.showMessageDialog(vistaEmpleados, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
-				
-		}
-			
-		
-		
+						
 	}
-
 
 
 	private void sort() {
@@ -221,12 +225,9 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 					vistaEmpleados.dispose();
 					
 				}
-				
-				
+					
 			}
 			
-		
-
 		};
 		
 		task.execute();
@@ -262,9 +263,10 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 				case 5:
 					data.get(row).setEmail(value.toString());
 					break;
-//				case 6:
-//					data.get(row).setFechaNac(new java.sql.Date(value.toString()));
-//					break;
+				case 6:
+					java.util.Date fecha=(java.util.Date)value;
+					 data.get(row).setFechaNac(new java.sql.Date(fecha.getTime()));
+					 break;
 				case 7:
 					data.get(row).setCargo(value.toString());
 					break;			
