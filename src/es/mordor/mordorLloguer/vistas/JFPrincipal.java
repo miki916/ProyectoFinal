@@ -2,6 +2,10 @@ package es.mordor.mordorLloguer.vistas;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,6 +22,7 @@ public class JFPrincipal extends JFrame {
 	private JButton btnLogOut;
 	private JButton btnEmpleados;
 	private JDesktopPane desktopPane;
+	private JButton btnClientes;
 
 	/**
 	 * Create the frame.
@@ -40,6 +45,9 @@ public class JFPrincipal extends JFrame {
 		btnEmpleados = new JButton("Empleados");
 		btnEmpleados.setIcon(new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/employe.png")));
 		menuBar.add(btnEmpleados);
+		
+		btnClientes = new JButton("Clientes");
+		menuBar.add(btnClientes);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -48,6 +56,14 @@ public class JFPrincipal extends JFrame {
 		desktopPane = new JDesktopPane();
 		contentPane.add(desktopPane, BorderLayout.CENTER);
 	}
+	
+	
+	
+
+	public JButton getBtnClientes() {
+		return btnClientes;
+	}
+
 
 	public JPanel getContentPane() {
 		return contentPane;

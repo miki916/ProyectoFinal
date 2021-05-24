@@ -7,6 +7,8 @@ import java.util.List;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
+import es.mordor.morderLloguer.model.BBDD.Empleado;
+
 
 
 public abstract class MyTableModel<T> extends AbstractTableModel{
@@ -69,5 +71,6 @@ public abstract class MyTableModel<T> extends AbstractTableModel{
 		data.remove(element);
 		fireTableRowsDeleted(index,index);
 	}
+
 	
 }			

@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 public class MyOracleDataBase implements AlmacenDatosDB {
 	
 	
-	public boolean addEmpleado(String[] data) {
+	public boolean addEmployee(String[] data) {
 		
 		boolean añadido = false;
 		
@@ -113,6 +113,48 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return empleados;
 	}
 	
+	public ArrayList<Cliente> getCustomClient(String where){
+		
+		ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "SELECT * FROM CLIENTE";
+		
+		if(where != null)
+			
+			query += "WHERE " + where; 
+			
+		
+		try(Connection con = ds.getConnection();
+				Statement st = con.createStatement();
+				ResultSet rs = st.executeQuery(query)){
+			
+			Cliente cliente;
+			
+			while(rs.next()) {
+				
+				cliente = new Cliente(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),
+						rs.getString("apellidos"), rs.getString("CP"), rs.getString("domicilio"), rs.getString("email"), rs.getDate("fechaNac"),
+						rs.getString("carnet"));
+				
+						
+				clientes.add(cliente);
+				
+			}
+			
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		
+		return clientes;
+		
+	}
+	
 
 	
 	@Override
@@ -147,32 +189,33 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	
 		
 	@Override
-	public ArrayList<Empleado> getEmpleados() {
+	public ArrayList<Empleado> getEmployee() {
 		// TODO Auto-generated method stub
 		return getCustomEmpleados(null);
 	}
 
 	
 	@Override
-	public ArrayList<Empleado> getEmpleadosPorCP(String cp) {
+	public ArrayList<Empleado> getEmployeeByCP(String cp) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<Empleado> getEmpleadosPorCargo(String cargo) {
+	public ArrayList<Empleado> getEmployeeByCargo(String cargo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Empleado getEmpleadoPorDNI(String dni) {
+	public Empleado getEmployeeByDNI(String dni) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		return getCustomEmpleados("DNI= '" + dni + "'").get(0);
 	}
 
 	@Override
-	public boolean updateEmpleado(Empleado empleado) {
+	public boolean updateEmployee(Empleado empleado) {
 
 		boolean actualizado = false;
 		
@@ -206,7 +249,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	}
 
 	@Override
-	public boolean deleteEmpleado(String dni) {
+	public boolean deleteEmployee(String dni) {
 		
 		boolean eliminado = false;
 		
@@ -252,6 +295,12 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		
 		return getCustomEmpleadosOrdenados(field + " " + order);
+	}
+
+	@Override
+	public ArrayList<Cliente> getClient() {
+		// TODO Auto-generated method stub
+		return getCustomClient(null);
 	}
 
 }
