@@ -14,20 +14,20 @@ import es.mordor.mordorLloguer.vistas.*;
 
 
 
-public class ControladorPrincipal implements ActionListener{
+public class MainController implements ActionListener{
 	
-	private static JFPrincipal vistaPrincipal;
+	private static JFMain vista;
 	private JIFLogin vistaLogin;
 	private AlmacenDatosDB almacenDatos;
-	private JIFEmpleados vistaEmpleados;
-	private JIFClientes vistaClientes;
-	private ControladorEmpleados controladorEmpleados;
-	private ControladorClientes controladorClientes;
+	private JIFEmployees vistaEmpleados;
+	private JIFCustomer vistaClientes;
+	private EmployeeController controladorEmpleados;
+	private CustomerController controladorClientes;
 
 	
-	public ControladorPrincipal(JFPrincipal vistaPrincipal, AlmacenDatosDB almacenDatos ) {
+	public MainController(JFMain vistaPrincipal, AlmacenDatosDB almacenDatos ) {
 		
-		this.vistaPrincipal = vistaPrincipal;
+		this.vista = vistaPrincipal;
 		this.almacenDatos = almacenDatos;
 		
 		incializar();
@@ -38,20 +38,21 @@ public class ControladorPrincipal implements ActionListener{
 	
 	private void incializar() {
 		// TODO Auto-generated method stub
-		vistaPrincipal.getBtnLogOut().setEnabled(false);
-		vistaPrincipal.getBtnEmpleados().setEnabled(false);
-		vistaPrincipal.getBtnClientes().setEnabled(false);
-
-		vistaPrincipal.getBtnLogin().addActionListener(this);
-		vistaPrincipal.getBtnLogOut().addActionListener(this);
-		vistaPrincipal.getBtnEmpleados().addActionListener(this);
-		vistaPrincipal.getBtnClientes().addActionListener(this);
+		vista.getBtnLogOut().setEnabled(false);
+		vista.getBtnEmpleados().setEnabled(false);
+		vista.getBtnClientes().setEnabled(false);
+		vista.getBtnRent().setEnabled(false);
+		
+		vista.getBtnLogin().addActionListener(this);
+		vista.getBtnLogOut().addActionListener(this);
+		vista.getBtnEmpleados().addActionListener(this);
+		vista.getBtnClientes().addActionListener(this);
 
 		
-		vistaPrincipal.getBtnLogin().setActionCommand("AbrirLogin");
-		vistaPrincipal.getBtnLogOut().setActionCommand("Logout");
-		vistaPrincipal.getBtnEmpleados().setActionCommand("AbrirEmpleados");
-		vistaPrincipal.getBtnClientes().setActionCommand("OpenClients");
+		vista.getBtnLogin().setActionCommand("AbrirLogin");
+		vista.getBtnLogOut().setActionCommand("Logout");
+		vista.getBtnEmpleados().setActionCommand("AbrirEmpleados");
+		vista.getBtnClientes().setActionCommand("OpenClients");
 
 		
 		
@@ -59,7 +60,7 @@ public class ControladorPrincipal implements ActionListener{
 	
 	public void go() {
 		
-		vistaPrincipal.setVisible(true);
+		vista.setVisible(true);
 		
 	}
 
@@ -103,13 +104,13 @@ public class ControladorPrincipal implements ActionListener{
 		
 		if(!open(vistaClientes)) {
 			
-			vistaClientes = new JIFClientes();
-			controladorClientes = new ControladorClientes(vistaClientes,almacenDatos);
+			vistaClientes = new JIFCustomer();
+			controladorClientes = new CustomerController(vistaClientes,almacenDatos);
 			controladorClientes.go();
 			
 		}else {
 			
-			JOptionPane.showMessageDialog(vistaPrincipal, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(vista, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
 		
 		}
 		
@@ -123,12 +124,12 @@ public class ControladorPrincipal implements ActionListener{
 		
 		if(!open(vistaEmpleados)) {
 			
-			vistaEmpleados=new JIFEmpleados();
-			controladorEmpleados = new ControladorEmpleados(vistaEmpleados,almacenDatos);
+			vistaEmpleados=new JIFEmployees();
+			controladorEmpleados = new EmployeeController(vistaEmpleados,almacenDatos);
 			controladorEmpleados.go();
 		
 		}else {
-			JOptionPane.showMessageDialog(vistaPrincipal, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(vista, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
 			
 		}
 		
@@ -140,17 +141,19 @@ public class ControladorPrincipal implements ActionListener{
 	private void logout() {
 		// TODO Auto-generated method stub
 					
-			vistaPrincipal.getBtnEmpleados().setEnabled(false);
-			vistaPrincipal.getBtnLogOut().setEnabled(false);
-			vistaPrincipal.getBtnLogin().setEnabled(true);
-			
+			vista.getBtnEmpleados().setEnabled(false);
+			vista.getBtnLogOut().setEnabled(false);
+			vista.getBtnLogin().setEnabled(true);
+			vista.getBtnClientes().setEnabled(false);
+			vista.getBtnRent().setEnabled(false);
+
 			if(open(vistaEmpleados)) {
 				
 				removeJIF(vistaEmpleados);
 				
 			}
 			
-			JOptionPane.showMessageDialog(vistaPrincipal, "Sesion finalizada con exito", "Succes", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(vista, "Sesion finalizada con exito", "Succes", JOptionPane.INFORMATION_MESSAGE);
 				
 	}
 
@@ -190,18 +193,20 @@ public class ControladorPrincipal implements ActionListener{
 					 
 					if(get()) {
 						
-						vistaPrincipal.getBtnEmpleados().setEnabled(true);
-						vistaPrincipal.getBtnLogin().setEnabled(false);
-						vistaPrincipal.getBtnLogOut().setEnabled(true);
-						vistaPrincipal.getBtnClientes().setEnabled(true);
+						vista.getBtnEmpleados().setEnabled(true);
+						vista.getBtnLogin().setEnabled(false);
+						vista.getBtnLogOut().setEnabled(true);
+						vista.getBtnClientes().setEnabled(true);
+						vista.getBtnRent().setEnabled(true);
 
-						JOptionPane.showMessageDialog(vistaPrincipal, "Sesion iniciada con exito", "Succes", JOptionPane.INFORMATION_MESSAGE);
+
+						JOptionPane.showMessageDialog(vista, "Sesion iniciada con exito", "Succes", JOptionPane.INFORMATION_MESSAGE);
 						vistaLogin.doDefaultCloseAction();
 						
 					}else {
 						vistaLogin.getProgressBar().setVisible(false);
 						vistaLogin.getBtnLogin().setVisible(true);
-						JOptionPane.showMessageDialog(vistaPrincipal, "Contraseña o usuario incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(vista, "Contraseña o usuario incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
 						
 					}
 					 
@@ -233,21 +238,21 @@ public class ControladorPrincipal implements ActionListener{
 			vistaLogin.getBtnLogin().setActionCommand("Login");
 			
 		}else {
-			JOptionPane.showMessageDialog(vistaPrincipal, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(vista, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
 			
 		}
 		
 	}
 	
 	public static void center(JInternalFrame jif) {
-		Dimension deskSize=vistaPrincipal.getDesktopPane().getSize();
+		Dimension deskSize=vista.getDesktopPane().getSize();
 		Dimension ifSize=jif.getSize();
 		jif.setLocation((deskSize.width - ifSize.width) / 2,(deskSize.height-ifSize.height)/ 2);
 	}
 
 	
 	static void addJIF(JInternalFrame jif) {
-		vistaPrincipal.getDesktopPane().add(jif);
+		vista.getDesktopPane().add(jif);
 		center(jif);
 		jif.setVisible(true);
 		
@@ -260,7 +265,7 @@ public class ControladorPrincipal implements ActionListener{
 	
 	public static boolean open(JInternalFrame jif) {
 		boolean existe=false;
-		JInternalFrame[] frames= vistaPrincipal.getDesktopPane().getAllFrames();
+		JInternalFrame[] frames= vista.getDesktopPane().getAllFrames();
 		for(JInternalFrame frame:frames)
 			if(frame==jif)
 				existe=true;

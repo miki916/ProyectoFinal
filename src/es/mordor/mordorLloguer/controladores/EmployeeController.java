@@ -27,15 +27,15 @@ import com.github.lgooddatepicker.components.DatePicker;
 import es.mordor.morderLloguer.model.BBDD.*;
 import es.mordor.mordorLloguer.vistas.*;
 
-public class ControladorEmpleados implements ActionListener, TableModelListener{
+public class EmployeeController implements ActionListener, TableModelListener{
 	
-	private JIFEmpleados vistaEmpleados;
-	private JIFAddEmpleado vistaAddEmpleados;
+	private JIFEmployees vistaEmpleados;
+	private JIFAddEmployee vistaAddEmpleados;
 	private AlmacenDatosDB almacenDatos;
 	private MyTableModel mtm;
-	private ControladorEmpleados controlador;
+	private EmployeeController controlador;
 	
-	public ControladorEmpleados(JIFEmpleados vistaEmpleados, AlmacenDatosDB almacenDatos) {
+	public EmployeeController(JIFEmployees vistaEmpleados, AlmacenDatosDB almacenDatos) {
 		
 		this.almacenDatos = almacenDatos;
 		this.vistaEmpleados = vistaEmpleados;
@@ -59,7 +59,7 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 	
 	public void go() {
 		
-		ControladorPrincipal.addJIF(vistaEmpleados);
+		MainController.addJIF(vistaEmpleados);
 		sort();		
 	}
 	
@@ -156,7 +156,7 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 	private void removeRow() {
 		
 		int row = vistaEmpleados.getTable().getSelectedRow();
-		Empleado e = (Empleado) mtm.getElement(row);
+		Employee e = (Employee) mtm.getElement(row);
 		almacenDatos.deleteEmployee(e.getDNI());
 		mtm.removeElement(e);
 		
@@ -164,9 +164,9 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 
 	private void openAddEmpleado() {
 				
-		if(!ControladorPrincipal.open(vistaAddEmpleados)) {
-			vistaAddEmpleados=new JIFAddEmpleado();
-			ControladorPrincipal.addJIF(vistaAddEmpleados);
+		if(!MainController.open(vistaAddEmpleados)) {
+			vistaAddEmpleados=new JIFAddEmployee();
+			MainController.addJIF(vistaAddEmpleados);
 			
 			vistaAddEmpleados.getBtnCancel().addActionListener(this);
 			vistaAddEmpleados.getBtnAdd().addActionListener(this);
@@ -195,7 +195,7 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 		
 		SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
 			
-			ArrayList<Empleado> empleados;
+			ArrayList<Employee> empleados;
 			
 			@Override
 			protected Boolean doInBackground() throws Exception {
@@ -263,10 +263,10 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 		
 	}
 	
-	public class MyTableModelEmpleados extends MyTableModel<Empleado>{
+	public class MyTableModelEmpleados extends MyTableModel<Employee>{
 		
 				
-		public MyTableModelEmpleados( List<Empleado> data) {
+		public MyTableModelEmpleados( List<Employee> data) {
 			super(new String[]{"DNI","Nombre","Apellidos","Domicilio","CP","Email","Nacimiento","Cargo"}, data);
 			// TODO Auto-generated constructor stub
 		}
@@ -344,7 +344,7 @@ public class ControladorEmpleados implements ActionListener, TableModelListener{
 			
 			MyTableModelEmpleados mtm = (MyTableModelEmpleados) vistaEmpleados.getTable().getModel();
 			
-			Empleado empleado = mtm.getElement(e.getFirstRow());
+			Employee empleado = mtm.getElement(e.getFirstRow());
 			
 			SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
 

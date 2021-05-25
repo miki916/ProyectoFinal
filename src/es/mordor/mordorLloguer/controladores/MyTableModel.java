@@ -7,7 +7,7 @@ import java.util.List;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import es.mordor.morderLloguer.model.BBDD.Empleado;
+import es.mordor.morderLloguer.model.BBDD.Employee;
 
 
 

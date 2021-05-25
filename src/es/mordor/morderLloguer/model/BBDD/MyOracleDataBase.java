@@ -47,9 +47,9 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 	}
 	
-	public ArrayList<Empleado> getCustomEmpleados(String where) {
+	public ArrayList<Employee> getCustomEmpleados(String where) {
 
-		ArrayList<Empleado> empleados = new ArrayList<Empleado>();
+		ArrayList<Employee> empleados = new ArrayList<Employee>();
 
 		DataSource ds = MyDataSource.getOracleDataSource();
 
@@ -62,10 +62,10 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				Statement stmt = con.createStatement();
 				ResultSet rs = stmt.executeQuery(query)) {
 
-			Empleado empleado;
+			Employee empleado;
 
 			while (rs.next()) {
-				empleado = new Empleado(rs.getInt("idEmpleado"), rs.getString("DNI"), rs.getString("nombre"),
+				empleado = new Employee(rs.getInt("idEmpleado"), rs.getString("DNI"), rs.getString("nombre"),
 						rs.getString("apellidos"), rs.getString("CP"), rs.getString("email"), rs.getDate("fechaNac"),
 						rs.getString("cargo"), rs.getString("domicilio"),rs.getString("password"));
 
@@ -80,9 +80,9 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return empleados;
 	}
 	
-	public ArrayList<Empleado> getCustomEmpleadosOrdenados(String orderBy) {
+	public ArrayList<Employee> getCustomEmpleadosOrdenados(String orderBy) {
 
-		ArrayList<Empleado> empleados = new ArrayList<Empleado>();
+		ArrayList<Employee> empleados = new ArrayList<Employee>();
 
 		DataSource ds = MyDataSource.getOracleDataSource();
 
@@ -95,10 +95,10 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				Statement stmt = con.createStatement();
 				ResultSet rs = stmt.executeQuery(query)) {
 
-			Empleado empleado;
+			Employee empleado;
 
 			while (rs.next()) {
-				empleado = new Empleado(rs.getInt("idEmpleado"), rs.getString("DNI"), rs.getString("nombre"),
+				empleado = new Employee(rs.getInt("idEmpleado"), rs.getString("DNI"), rs.getString("nombre"),
 						rs.getString("apellidos"), rs.getString("CP"), rs.getString("email"), rs.getDate("fechaNac"),
 						rs.getString("cargo"), rs.getString("domicilio"),rs.getString("password"));
 
@@ -113,9 +113,9 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return empleados;
 	}
 	
-	public ArrayList<Cliente> getCustomClient(String where){
+	public ArrayList<Customer> getCustomClient(String where){
 		
-		ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+		ArrayList<Customer> clientes = new ArrayList<Customer>();
 		
 		DataSource ds = MyDataSource.getOracleDataSource();
 		
@@ -130,11 +130,11 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				Statement st = con.createStatement();
 				ResultSet rs = st.executeQuery(query)){
 			
-			Cliente cliente;
+			Customer cliente;
 			
 			while(rs.next()) {
 				
-				cliente = new Cliente(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),
+				cliente = new Customer(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),
 						rs.getString("apellidos"), rs.getString("CP"), rs.getString("domicilio"), rs.getString("email"), rs.getDate("fechaNac"),
 						rs.getString("carnet"));
 				
@@ -189,33 +189,33 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	
 		
 	@Override
-	public ArrayList<Empleado> getEmployee() {
+	public ArrayList<Employee> getEmployee() {
 		// TODO Auto-generated method stub
 		return getCustomEmpleados(null);
 	}
 
 	
 	@Override
-	public ArrayList<Empleado> getEmployeeByCP(String cp) {
+	public ArrayList<Employee> getEmployeeByCP(String cp) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ArrayList<Empleado> getEmployeeByCargo(String cargo) {
+	public ArrayList<Employee> getEmployeeByCargo(String cargo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Empleado getEmployeeByDNI(String dni) {
+	public Employee getEmployeeByDNI(String dni) {
 		// TODO Auto-generated method stub
 		
 		return getCustomEmpleados("DNI= '" + dni + "'").get(0);
 	}
 
 	@Override
-	public boolean updateEmployee(Empleado empleado) {
+	public boolean updateEmployee(Employee empleado) {
 
 		boolean actualizado = false;
 		
@@ -278,7 +278,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	
 
 	@Override
-	public ArrayList<Empleado> getEmpleadosOrdenadosBy(String field, int sort) {
+	public ArrayList<Employee> getEmpleadosOrdenadosBy(String field, int sort) {
 		// TODO Auto-generated method stub
 		
 		String order = "";
@@ -298,9 +298,68 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	}
 
 	@Override
-	public ArrayList<Cliente> getClient() {
+	public ArrayList<Customer> getClient() {
 		// TODO Auto-generated method stub
 		return getCustomClient(null);
+	}
+
+	@Override
+	public boolean deleteCustomer(String dni) {
+		// TODO Auto-generated method stub
+		
+		boolean eliminado = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		try(Connection con = ds.getConnection();
+				Statement st = con.createStatement()){
+			
+			String query="DELETE FROM CLIENTE WHERE DNI= '" + dni + "'";
+			
+			if(st.executeUpdate(query) == 1) {
+				
+				eliminado = true;
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return eliminado;
+	}
+
+	@Override
+	public boolean addCustomer(String[] data) {
+		
+		boolean añadido = false;		
+
+		DataSource ds = MyDataSource.getOracleDataSource();
+
+		try (Connection con = ds.getConnection();
+				Statement stmt = con.createStatement();){
+			
+			
+			String query = "insert into cliente(DNI, nombre, apellidos, domicilio, CP, email, fechaNac, carnet) VALUES"
+                    + "('"+ data[0] +"','" + data[1] +"', '"+ data[2] +"', '"+ data[3] +"', '"+ data[4] +"', '"+data[5]+"', TO_DATE('"+ data[6] +"','yyyy/mm/dd'), '"+data[7]+"')";
+
+			
+			System.out.println(query);
+			
+			if(stmt.executeUpdate(query)==1)
+				añadido=true;
+		
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+
+			
+		}
+		
+		
+		return añadido;
 	}
 
 }

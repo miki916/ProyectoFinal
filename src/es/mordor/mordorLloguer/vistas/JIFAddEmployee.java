@@ -29,7 +29,7 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 
 @SuppressWarnings("serial")
-public class JIFAddEmpleado extends JInternalFrame {
+public class JIFAddEmployee extends JInternalFrame {
 	private JPanel panel_1;
 	private JButton btnAdd;
 	private JButton btnCancel;
@@ -48,7 +48,7 @@ public class JIFAddEmpleado extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public JIFAddEmpleado() {
+	public JIFAddEmployee() {
 		setClosable(true);
 		setBounds(100, 100, 516, 394);
 		getContentPane().setLayout(null);
@@ -70,7 +70,7 @@ public class JIFAddEmpleado extends JInternalFrame {
 		
 		lblNewLabel = new JLabel();
 		lblNewLabel.setBounds(212, 0, 54, 50);
-		Image image = (new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/adduser.png")).getImage());
+		Image image = (new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/employe.png")).getImage());
 		ImageIcon imageIconResized = new ImageIcon(getScaledImage(image,50));
 	
 		lblNewLabel.setIcon(imageIconResized);

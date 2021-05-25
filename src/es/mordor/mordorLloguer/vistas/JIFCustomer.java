@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JInternalFrame;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -12,6 +13,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableModel;
 
 import com.alee.laf.table.WebTable;
+import com.alee.laf.text.WebTextField;
 
 import net.miginfocom.swing.MigLayout;
 import java.awt.BorderLayout;
@@ -22,25 +24,25 @@ import javax.swing.JMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
+import javax.swing.JTextField;
 
-public class JIFEmpleados extends JInternalFrame {
-	private  WebTable table; ;
-	private JComboBox comboBoxOrder;
-	private JComboBox comboBoxSort;
-	private DefaultComboBoxModel<String> dcmOrder;
-	private DefaultComboBoxModel<String> dcmSort;
-	private JMenuItem mntmAddRow;
-	private JMenuItem mntmDeleteRow;
+public class JIFCustomer extends JInternalFrame {
+	private  WebTable table; 
 	private JPopupMenu popupMenu;
 	private JPanel panelSuperior;
 	private JButton btnRemove;
 	private JButton btnAdd;
+	private WebTextField textFieldDni;
+	private WebTextField textFieldName;
+	private WebTextField textFieldSurname;
+	private JButton btnPrint;
+	private JComboBox<String> comboBox;
 	
 
 	/**
 	 * Create the frame.
 	 */
-	public JIFEmpleados() {
+	public JIFCustomer() {
 		setClosable(true);
 		setBounds(100, 100, 867, 556);
 		
@@ -56,18 +58,18 @@ public class JIFEmpleados extends JInternalFrame {
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(panelCentral, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(panelSuperior, GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
-						.addComponent(panelInferior, GroupLayout.PREFERRED_SIZE, 831, GroupLayout.PREFERRED_SIZE))
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(panelSuperior, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
+						.addComponent(panelCentral, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(panelInferior, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 831, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(panelSuperior, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
+					.addComponent(panelSuperior, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(panelCentral, GroupLayout.PREFERRED_SIZE, 387, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(panelInferior, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
@@ -92,41 +94,83 @@ public class JIFEmpleados extends JInternalFrame {
         table.setEditable ( true );
         popupMenu = new JPopupMenu();
 		
-		mntmAddRow = new JMenuItem("Add row");
-		popupMenu.add(mntmAddRow);
-		
-		mntmDeleteRow = new JMenuItem("Delete row");
-		popupMenu.add(mntmDeleteRow);
+
 		scrollPane.setViewportView(table);
 	
 		
-		panelSuperior.setLayout(new MigLayout("", "[][][112.00][10][][][117.00]", "[]"));
+		panelSuperior.setLayout(new MigLayout("", "[200][grow][200][grow][200][20][][100][grow][50][50]", "[]"));
 		
-		JLabel lblOrderBy = new JLabel("Clasificar por");
-		panelSuperior.add(lblOrderBy, "cell 0 0");
+		textFieldDni = new WebTextField();
+		textFieldDni.setInputPrompt("Dni");
+		panelSuperior.add(textFieldDni, "cell 0 0,growx");
+		textFieldDni.setColumns(10);
 		
-		comboBoxOrder = new JComboBox();
-		comboBoxOrder.setModel(new DefaultComboBoxModel(new String[] {"DNI", "Nombre", "Domicilio", "CP", "Email", "FechaNac", "Cargo"}));
-		panelSuperior.add(comboBoxOrder, "cell 1 0 2 1,growx");
+		textFieldName = new WebTextField();
+		textFieldName.setInputPrompt("Nombre");
+		panelSuperior.add(textFieldName, "cell 2 0,growx");
+		textFieldName.setColumns(10);
 		
-		JLabel lblClasificar = new JLabel("Ordenar por");
-		panelSuperior.add(lblClasificar, "cell 5 0,alignx trailing");
+		textFieldSurname = new WebTextField();
+		textFieldSurname.setInputPrompt("Apellidos");
+		panelSuperior.add(textFieldSurname, "cell 4 0,growx");
+		textFieldSurname.setColumns(10);
 		
-		comboBoxSort = new JComboBox();
-		comboBoxSort.setModel(new DefaultComboBoxModel(new String[] {"Ascendente", "Descendente"}));
-		panelSuperior.add(comboBoxSort, "cell 6 0,growx");
+		JLabel lblNewLabel = new JLabel("Carnet conducir");
+		panelSuperior.add(lblNewLabel, "cell 6 0");
+		
+		comboBox = new JComboBox<String>();
+		comboBox.addItem("All");
+		comboBox.addItem("A");
+		comboBox.addItem("B");
+		comboBox.addItem("C");
+		comboBox.addItem("D");
+		comboBox.addItem("E");
+		comboBox.addItem("Z");
+		panelSuperior.add(comboBox, "cell 7 0,growx");
+		
+		btnPrint = new JButton();
+		btnPrint.setIcon(new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/printer.png")));
+		panelSuperior.add(btnPrint, "cell 10 0");
 		getContentPane().setLayout(groupLayout);
 
 	}
+	
+	
 
-	public JMenuItem getMntmAddRow() {
-		return mntmAddRow;
+	public JPanel getPanelSuperior() {
+		return panelSuperior;
 	}
 
 
-	public JMenuItem getMntmDeleteRow() {
-		return mntmDeleteRow;
+
+	public WebTextField getTextFieldDni() {
+		return textFieldDni;
 	}
+
+
+
+	public WebTextField getTextFieldName() {
+		return textFieldName;
+	}
+
+
+
+	public WebTextField getTextFieldSurname() {
+		return textFieldSurname;
+	}
+
+
+
+	public JButton getBtnPrint() {
+		return btnPrint;
+	}
+
+
+
+	public JComboBox<String> getComboBox() {
+		return comboBox;
+	}
+
 
 
 	public JPopupMenu getPopupMenu() {
@@ -147,14 +191,7 @@ public class JIFEmpleados extends JInternalFrame {
 	public WebTable getTable() {
 		return table;
 	}
-
-
-	public JComboBox getComboBoxOrder() {
-		return comboBoxOrder;
-	}
-
-
-	public JComboBox getComboBoxSort() {
-		return comboBoxSort;
-	}
+	
 }
+
+

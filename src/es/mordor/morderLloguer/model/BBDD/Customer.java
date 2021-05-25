@@ -2,7 +2,7 @@ package es.mordor.morderLloguer.model.BBDD;
 
 import java.sql.Date;
 
-public class Cliente {
+public class Customer {
 
 	private int idCliente;
 	private String DNI;
@@ -15,7 +15,7 @@ public class Cliente {
 	private String carnet;
 	
 	
-	public Cliente(int idCliente, String dNI, String name, String surname, String address, String cP, String email,
+	public Customer(int idCliente, String dNI, String name, String surname, String address, String cP, String email,
 			Date fechaNac, String carnet) {
 		super();
 		this.idCliente = idCliente;

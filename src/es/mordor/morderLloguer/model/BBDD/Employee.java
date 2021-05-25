@@ -2,7 +2,7 @@ package es.mordor.morderLloguer.model.BBDD;
 
 import java.sql.Date;
 
-public class Empleado {
+public class Employee {
 
 	private int idEmpleado;
 	private String DNI;
@@ -15,7 +15,7 @@ public class Empleado {
 	private String domicilio;
 	private String password;
 	
-	public Empleado(int idEmpleado, String dNI, String nombre, String apellidos, String cP, String email, Date fechaNac,
+	public Employee(int idEmpleado, String dNI, String nombre, String apellidos, String cP, String email, Date fechaNac,
 			String cargo, String domicilio, String password) {
 		super();
 		this.idEmpleado = idEmpleado;
@@ -30,7 +30,7 @@ public class Empleado {
 		this.password = password;
 	}
 	
-	public Empleado(String dni) {
+	public Employee(String dni) {
 		this.DNI=dni;
 	}
 	public int getIdEmpleado() {
@@ -96,8 +96,8 @@ public class Empleado {
 	
 	@Override
 	public boolean equals(Object o) {
-		if(o instanceof Empleado) {
-			return ((Empleado) o).getDNI().compareToIgnoreCase(DNI)==0;
+		if(o instanceof Employee) {
+			return ((Employee) o).getDNI().compareToIgnoreCase(DNI)==0;
 		}else{
 			return false;
 		}

@@ -56,13 +56,13 @@ public class JIFLogin extends JInternalFrame {
 		textFieldUser = new WebTextField();
 		textFieldUser.setInputPrompt("  Username");
 		textFieldUser.setToolTipText("");
-		textFieldUser.setLeadingComponent ( new WebImage(new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/username.png"))));
+		textFieldUser.setLeadingComponent ( new WebImage(new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/username.png"))));
 		panelCentral.add(textFieldUser);
 		textFieldUser.setColumns(30);
 		
 		textFieldPassword = new WebPasswordField();
 		textFieldPassword.setInputPrompt("  Password");
-		textFieldPassword.setLeadingComponent ( new WebImage(new ImageIcon(JFPrincipal.class.getResource("/es/mordor/mordorLloguer/recursos/candado.png"))));
+		textFieldPassword.setLeadingComponent ( new WebImage(new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/candado.png"))));
 		panelCentral.add(textFieldPassword);
 		textFieldPassword.setColumns(30);
 		
@@ -75,11 +75,10 @@ public class JIFLogin extends JInternalFrame {
 		panelInferior.add(btnLogin, BorderLayout.CENTER);
 		
 		progressBar = new JProgressBar();
-		progressBar.setBounds(20, 210, 391, 28);
+		panelInferior.add(progressBar, BorderLayout.NORTH);
 		progressBar.setForeground(Color.GREEN);
 		progressBar.setIndeterminate(true);
 		progressBar.setVisible(false);
-		getContentPane().add(progressBar);
 
 	}
 	

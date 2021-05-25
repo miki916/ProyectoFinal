@@ -5,8 +5,8 @@ import java.awt.EventQueue;
 import com.alee.laf.WebLookAndFeel;
 
 import es.mordor.morderLloguer.model.BBDD.*;
-import es.mordor.mordorLloguer.controladores.ControladorPrincipal;
-import es.mordor.mordorLloguer.vistas.JFPrincipal;
+import es.mordor.mordorLloguer.controladores.MainController;
+import es.mordor.mordorLloguer.vistas.JFMain;
 
 
 public class App {
@@ -17,10 +17,10 @@ public class App {
 			public void run() {
 				try {
 					WebLookAndFeel.install();
-					JFPrincipal frame = new JFPrincipal();
+					JFMain frame = new JFMain();
 					AlmacenDatosDB modelo=new MyOracleDataBase();
 
-					ControladorPrincipal c = new ControladorPrincipal(frame,modelo);
+					MainController c = new MainController(frame,modelo);
 					c.go();
 				} catch (Exception e) {
 					e.printStackTrace();
