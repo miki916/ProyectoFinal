@@ -278,7 +278,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	
 
 	@Override
-	public ArrayList<Employee> getEmpleadosOrdenadosBy(String field, int sort) {
+	public ArrayList<Employee> getEmployeeOrderBy(String field, int sort) {
 		// TODO Auto-generated method stub
 		
 		String order = "";
@@ -298,7 +298,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	}
 
 	@Override
-	public ArrayList<Customer> getClient() {
+	public ArrayList<Customer> getCustomer() {
 		// TODO Auto-generated method stub
 		return getCustomClient(null);
 	}
@@ -360,6 +360,79 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		
 		return añadido;
+	}
+
+	@Override
+	public boolean updateCustomer(Customer cliente) {
+		// TODO Auto-generated method stub
+		boolean actualizado = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+
+		try (Connection con = ds.getConnection();
+				Statement stmt = con.createStatement();){
+	
+			String query = "UPDATE CLIENTE SET nombre='" + cliente.getName() + "', " +
+												"apellidos='" + cliente.getSurname() + "'," + 
+												((cliente.getAddress()!=null)?"domicilio='" + cliente.getAddress() + "',":"") + 
+												((cliente.getCP()!=null)?"CP='"	+ cliente.getCP() + "',":"") + 
+												"email='" + cliente.getEmail() + "'," + 
+												"fechaNac=TO_DATE('" + cliente.getFechaNac() + "','yyyy-mm-dd')," + 
+												"carnet='" + cliente.getCarnet() + "' " + 
+												"WHERE DNI='" + cliente.getDNI() + "'";
+			
+			System.out.println(query);
+			
+			if(stmt.executeUpdate(query)==1)
+				actualizado=true;
+		
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+
+		}
+		
+				
+		return actualizado;
+		
+	}
+
+
+	@Override
+	public ArrayList<Customer> getCustomerOrderBy(String orderBy) {
+		
+		ArrayList<Customer> clientes = new ArrayList<Customer>();
+
+		DataSource ds = MyDataSource.getOracleDataSource();
+
+		String query = "SELECT * FROM CLIENTE";
+
+		if (orderBy != null)
+			query += " ORDER BY " + orderBy;
+
+		try (Connection con = ds.getConnection();
+				Statement stmt = con.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+
+			Customer cliente;
+
+			while (rs.next()) {
+				
+				cliente = new Customer(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),
+						rs.getString("apellidos"), rs.getString("CP"), rs.getString("domicilio"), rs.getString("email"), rs.getDate("fechaNac"),
+						rs.getString("carnet"));
+				
+						
+				clientes.add(cliente);
+				
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return clientes;
 	}
 
 }

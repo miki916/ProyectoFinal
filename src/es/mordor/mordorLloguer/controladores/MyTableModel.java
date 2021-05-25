@@ -48,6 +48,9 @@ public abstract class MyTableModel<T> extends AbstractTableModel{
 	}
 	
 	@Override
+	public abstract void setValueAt(Object value, int row, int col);
+	
+	@Override
 	public abstract Object getValueAt(int row, int col);
 	
 	public void addElementAtRow(T element) {

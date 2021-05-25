@@ -82,29 +82,15 @@ public class CustomerController implements ActionListener, TableModelListener {
 		
 		ArrayList<Customer> result;
 		
-		
-		if(vista.getComboBox().getSelectedItem().toString().equals("All")) {
-			
-			 result = (ArrayList<Customer>) customers.stream()
-					.filter((c) -> c.getDNI().contains(vista.getTextFieldDni().getText()))
-					.filter((c) -> c.getName().contains(vista.getTextFieldName().getText()))
-					.filter((c) -> c.getSurname().contains(vista.getTextFieldSurname().getText()))
-					.collect(Collectors.toList());
-			
-		}else {
-			
 			result = (ArrayList<Customer>) customers.stream()
-					.filter((c) -> c.getDNI().contains(vista.getTextFieldDni().getText()))
-					.filter((c) -> c.getName().contains(vista.getTextFieldName().getText()))
-					.filter((c) -> c.getSurname().contains(vista.getTextFieldSurname().getText()))
-					.filter((c) -> c.getCarnet().contains(vista.getComboBox().getSelectedItem().toString()))
-					.collect(Collectors.toList());
+			.filter((c) -> c.getDNI().toUpperCase().contains(vista.getTextFieldDni().getText().toUpperCase()))
+			.filter((c) -> c.getName().toUpperCase().contains(vista.getTextFieldName().getText().toUpperCase()))
+			.filter((c) -> c.getSurname().toUpperCase().contains(vista.getTextFieldSurname().getText().toUpperCase()))
+			.filter((c) -> c.getCarnet().toUpperCase().contains(vista.getComboBox().getSelectedItem().toString()) || 
+					vista.getComboBox().getSelectedItem().toString().equals("All") )
+			.collect(Collectors.toList());
 			
-		}
-		
-		
-		
-		System.out.println("hehe");
+	
 		mtm = new MyTableModelCustomer(result);
 		vista.getTable().setModel(mtm);
 		
@@ -193,40 +179,32 @@ public class CustomerController implements ActionListener, TableModelListener {
 				String carnet = (String) vistaAddCustomer.getComboBox().getSelectedItem();
 				String domicilio = vistaAddCustomer.getTextFieldAddress().getText();
 				Boolean error = false;
-				try {
-					
-													
-					String[] data = {DNI,name,apellidos,domicilio,CP,email,fecha,carnet};
-						
-					error = almacenDatos.addCustomer(data);
-					
-					
-				}catch(Exception e) {
-					
-					e.printStackTrace();
-					
-				}
 				
-				if(error) {
+					try {
+														
+						String[] data = {DNI,name,apellidos,domicilio,CP,email,fecha,carnet};		
+						error = almacenDatos.addCustomer(data);
+						
+					}catch(Exception e) {
+						
+						e.printStackTrace();
+						
+					}
 					
-					sort();
-					JOptionPane.showMessageDialog(vista, "Cliente añadido correctamente", "Succes", JOptionPane.INFORMATION_MESSAGE);
-					vistaAddCustomer.dispose();
-					
-				}else {
-					
-					JOptionPane.showMessageDialog(vista, "Error al añadir al cliente", "Error", JOptionPane.INFORMATION_MESSAGE);
+				
+					if(error) {
+						
+						sort();
+						JOptionPane.showMessageDialog(vista, "Cliente añadido correctamente", "Succes", JOptionPane.INFORMATION_MESSAGE);
+						vistaAddCustomer.dispose();
+						
+					}else 
+			
+						JOptionPane.showMessageDialog(vista, "Error al añadir al cliente", "Error", JOptionPane.INFORMATION_MESSAGE);
 
 					
-				}
-				
-		
-				
 				return null;
 			}
-			
-			
-			
 			
 		};
 
@@ -239,7 +217,7 @@ public class CustomerController implements ActionListener, TableModelListener {
 		
 		int row = vista.getTable().getSelectedRow();
 		Customer e = (Customer) mtm.getElement(row);
-		almacenDatos.deleteEmployee(e.getDNI());
+		almacenDatos.deleteCustomer(e.getDNI());
 		mtm.removeElement(e);
 		
 	}
@@ -259,8 +237,7 @@ public class CustomerController implements ActionListener, TableModelListener {
 					
 					if(!isCancelled()) {
 						
-						customers = almacenDatos.getClient();
-					
+						customers = almacenDatos.getCustomerOrderBy("APELLIDOS" + " ASC");
 					}
 					
 				}catch(Exception e) {
@@ -329,7 +306,16 @@ public class CustomerController implements ActionListener, TableModelListener {
 			super(new String[] {"DNI","Nombre","Apellidos","Domicilio","CP","Email","FechaNac","Carnet"}, data);
 			
 		}
-
+		
+		public Class<?> getColumnClass(int colIndex) {
+			switch(colIndex) {
+			case 6: return Date.class;
+			default: return String.class;
+			}
+			
+		}
+		
+	
 		@Override
 		public Object getValueAt(int row, int col) {
 			// TODO Auto-generated method stub
@@ -358,6 +344,47 @@ public class CustomerController implements ActionListener, TableModelListener {
 			
 			return null;
 		}
+
+
+		@Override
+		public void setValueAt(Object value, int row, int col) {
+			// TODO Auto-generated method stub
+			
+			switch(col) {
+				
+				case 1:
+					data.get(row).setName(value.toString());
+					break;
+				
+				case 2:
+					data.get(row).setSurname(value.toString());
+					break;
+				
+				case 3: 
+					data.get(row).setAddress(value.toString());
+					break;
+				
+				case 4:
+					data.get(row).setCP(value.toString());
+					break;
+				
+				case 5:
+					data.get(row).setEmail(value.toString());
+					break;
+				
+				case 6: 
+					java.util.Date fecha=(java.util.Date)value;
+					data.get(row).setFechaNac(new java.sql.Date(fecha.getTime()));
+					break;
+					
+				case 7:
+					data.get(row).setCarnet(value.toString());
+					break;
+			}
+			
+			fireTableCellUpdated(row,  col);
+
+		}
 		
 		
 	}
@@ -365,8 +392,41 @@ public class CustomerController implements ActionListener, TableModelListener {
 	
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		// TODO Auto-generated method stub
+
+		if(e.getType() == TableModelEvent.UPDATE) {
+			
 		
+			MyTableModelCustomer mtm = (MyTableModelCustomer) vista.getTable().getModel();
+			
+			Customer cliente = mtm.getElement(e.getFirstRow());
+			
+			SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
+				
+
+				@Override
+				protected Boolean doInBackground() throws Exception {
+					// TODO Auto-generated method stub
+					try {
+						
+						if(!isCancelled())
+							almacenDatos.updateCustomer(cliente);
+						
+					}catch(Exception e) {
+						
+						e.printStackTrace();
+						
+					}
+					
+					return null;
+				}
+				
+				
+				
+			};
+			
+			task.execute();
+		
+		}
 	}
 
 }

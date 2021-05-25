@@ -203,7 +203,7 @@ public class EmployeeController implements ActionListener, TableModelListener{
 				try{
 					
 					if(!isCancelled())
-						empleados = almacenDatos.getEmpleadosOrdenadosBy(
+						empleados = almacenDatos.getEmployeeOrderBy(
 								((String) vistaEmpleados.getComboBoxOrder().getSelectedItem()), sortN);
 					
 				}catch(Exception e) {
@@ -331,6 +331,14 @@ public class EmployeeController implements ActionListener, TableModelListener{
 			}
 						
 			return null;
+		}
+		
+		public Class<?> getColumnClass(int colIndex) {
+			switch(colIndex) {
+			case 6: return Date.class;
+			default: return String.class;
+			}
+			
 		}
 			
 		
