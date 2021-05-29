@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -303,7 +304,7 @@ public class CustomerController implements ActionListener, TableModelListener {
 		
 		public MyTableModelCustomer(List<Customer> data) {
 			
-			super(new String[] {"DNI","Nombre","Apellidos","Domicilio","CP","Email","FechaNac","Carnet"}, data);
+			super(Arrays.asList("DNI","Nombre","Apellidos","Domicilio","CP","Email","FechaNac","Carnet"), data);
 			
 		}
 		

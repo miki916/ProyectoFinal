@@ -13,11 +13,11 @@ import es.mordor.morderLloguer.model.BBDD.Employee;
 
 public abstract class MyTableModel<T> extends AbstractTableModel{
 	
-	protected final String[] HEADER;
+	protected final List<String> HEADER;
 	
 	protected List<T> data;
 	
-	public MyTableModel(String[] HEADER,List<T> data) {
+	public MyTableModel(List<String> HEADER,List<T> data) {
 		this.data=data;
 		this.HEADER=HEADER;
 	}
@@ -25,7 +25,7 @@ public abstract class MyTableModel<T> extends AbstractTableModel{
 	@Override
 	public int getColumnCount() {
 		// TODO Auto-generated method stub
-		return HEADER.length;
+		return HEADER.size();
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public abstract class MyTableModel<T> extends AbstractTableModel{
 	}
 	@Override
 	public String getColumnName(int column) {
-		return HEADER[column];
+		return HEADER.get(column);
 	}
 	
 	

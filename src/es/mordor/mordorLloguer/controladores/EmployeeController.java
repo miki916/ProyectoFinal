@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -267,7 +268,7 @@ public class EmployeeController implements ActionListener, TableModelListener{
 		
 				
 		public MyTableModelEmpleados( List<Employee> data) {
-			super(new String[]{"DNI","Nombre","Apellidos","Domicilio","CP","Email","Nacimiento","Cargo"}, data);
+			super(Arrays.asList("DNI","Nombre","Apellidos","Domicilio","CP","Email","Nacimiento","Cargo"), data);
 			// TODO Auto-generated constructor stub
 		}
 		

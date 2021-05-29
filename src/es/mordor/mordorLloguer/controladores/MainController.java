@@ -21,8 +21,10 @@ public class MainController implements ActionListener{
 	private AlmacenDatosDB almacenDatos;
 	private JIFEmployees vistaEmpleados;
 	private JIFCustomer vistaClientes;
+	private JIFVehicles vistaVehiculos;
 	private EmployeeController controladorEmpleados;
 	private CustomerController controladorClientes;
+	private VehiclesController controladorVehiculos;
 
 	
 	public MainController(JFMain vistaPrincipal, AlmacenDatosDB almacenDatos ) {
@@ -47,12 +49,13 @@ public class MainController implements ActionListener{
 		vista.getBtnLogOut().addActionListener(this);
 		vista.getBtnEmpleados().addActionListener(this);
 		vista.getBtnClientes().addActionListener(this);
-
+		vista.getBtnRent().addActionListener(this);
 		
 		vista.getBtnLogin().setActionCommand("AbrirLogin");
 		vista.getBtnLogOut().setActionCommand("Logout");
 		vista.getBtnEmpleados().setActionCommand("AbrirEmpleados");
 		vista.getBtnClientes().setActionCommand("OpenClients");
+		vista.getBtnRent().setActionCommand("OpenRent");
 
 		
 		
@@ -93,10 +96,33 @@ public class MainController implements ActionListener{
 			
 			openJIFClientes();
 			
+		}else if(command == "OpenRent") {
+			
+			openJIFRent();
+			
 		}
 		
 		
 	}
+
+
+	private void openJIFRent() {
+		// TODO Auto-generated method stub
+		
+		if(!open(vistaVehiculos)) {
+			
+			vistaVehiculos = new JIFVehicles();
+			controladorVehiculos = new VehiclesController(vistaVehiculos,almacenDatos);
+			controladorVehiculos.go();
+			
+		}else {
+			
+			JOptionPane.showMessageDialog(vista, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
+		
+		}
+		
+	}
+
 
 
 	private void openJIFClientes() {

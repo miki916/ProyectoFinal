@@ -435,4 +435,99 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return clientes;
 	}
 
+	@Override
+	public ArrayList<Vehicle> getVehiclesOrderBy(String orderBy, String table) {
+		// TODO Auto-generated method stub
+		
+		ArrayList<Vehicle> vehiculos = new ArrayList<Vehicle>();
+
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String sql = "SELECT * FROM VEHICULO, " + table;
+		
+		System.out.println(sql);
+		
+//		if(orderBy != null)
+//			sql += " ORDER BY " + orderBy;
+		
+		try(Connection con = ds.getConnection();
+				Statement st = con.createStatement();
+				ResultSet rs = st.executeQuery(sql)){
+			
+			while(rs.next()) {
+			
+				String[] v = { rs.getString("MATRICULA"), rs.getString("MARCA"), rs.getString("COLOR"),
+						rs.getString("MOTOR"), rs.getString("ESTADO"), rs.getString("CARNET")};
+				
+				int cilindrada =  rs.getInt("CILINDRADA");
+				
+				if(table.equals("COCHE")) {
+					
+					Car coche =  new Car(v[0],v[1], v[2], v[3],cilindrada,
+							v[4],v[5], rs.getInt("NUMPLAZAS"),rs.getInt("NUMPUERTAS"));
+					
+					vehiculos.add(coche);
+					
+				}else if(table.equals("FURGONETA")) {
+					
+					Van furgo =  new Van(v[0],v[1], v[2], v[3],cilindrada,
+							v[4],v[5], rs.getInt("MMA"));
+					
+					vehiculos.add(furgo);
+					
+				}else if(table.equals("CAMION")) {
+					
+					Truck camion =  new Truck(v[0],v[1], v[2], v[3],cilindrada,
+							v[4],v[5], rs.getInt("NUMRUEDAS"), rs.getInt("MMA"));
+					
+					vehiculos.add(camion);
+					
+				}else if(table.equals("MICROBUS")) {
+					
+					Minibus minibus =  new Minibus(v[0],v[1], v[2], v[3],cilindrada,
+							v[4],v[5],rs.getInt("NUMPLAZAS"), rs.getInt("MEDIDA"));
+					
+					vehiculos.add(minibus);
+					
+				}
+			}
+				
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+		}
+		
+		
+		return vehiculos;
+	}
+	
+
+	
+	
+	@Override
+	public ArrayList<Vehicle> getCarsOrderBy(String orderBy) {
+		// TODO Auto-generated method stub
+		return getVehiclesOrderBy(orderBy, "COCHE");
+	}
+
+	@Override
+	public ArrayList<Vehicle> getVanOrderBy(String orderBy) {
+		// TODO Auto-generated method stub
+		return getVehiclesOrderBy(orderBy, "FURGONETA");
+	}
+
+	@Override
+	public ArrayList<Vehicle>  getTruckOrderBy(String orderBy) {
+		// TODO Auto-generated method stub
+		return getVehiclesOrderBy(orderBy, "CAMION");
+	}
+
+	@Override
+	public ArrayList<Vehicle> getMiniBusOrderBy(String orderBy) {
+		// TODO Auto-generated method stub
+		return getVehiclesOrderBy(orderBy, "MICROBUS");
+	}
+
 }

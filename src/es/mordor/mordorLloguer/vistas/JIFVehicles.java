@@ -8,33 +8,63 @@ import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 
 public class JIFVehicles extends JInternalFrame {
-
+	private JPVehicles panelCar;
+	private JPVehicles panelVan;
+	private JPVehicles panelTruck;
+	private JPVehicles panelMiniBus;
+	private JTabbedPane tabbedPane;
 
 	/**
 	 * Create the frame.
 	 */
 	public JIFVehicles() {
 		
-		setBounds(100, 100, 645, 501);
+		setBounds(100, 100, 867, 556);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
-		JPVehicles panelCar = new JPVehicles();
+		panelCar = new JPVehicles();
 		tabbedPane.addTab("Coche", null, panelCar, null);
 		
 		
 			
-		JPVehicles panelVan = new JPVehicles();
-		tabbedPane.addTab("Furgonea", null, panelVan, null);
+		panelVan = new JPVehicles();
+		tabbedPane.addTab("Furgoneta", null, panelVan, null);
 		
-		JPVehicles panelTruck = new JPVehicles();
+		panelTruck = new JPVehicles();
 		tabbedPane.addTab("Camion", null, panelTruck, null);
 		
-		JPVehicles panelMiniBus = new JPVehicles();
+		panelMiniBus = new JPVehicles();
 		tabbedPane.addTab("MiniBus", null, panelMiniBus, null);
 	
 		
 	}
+	
+	public JTabbedPane getTabbedPane() {
+		return tabbedPane;
+	}
+
+
+	public JPVehicles getPanelCar() {
+		return panelCar;
+	}
+
+
+	public JPVehicles getPanelVan() {
+		return panelVan;
+	}
+
+
+	public JPVehicles getPanelTruck() {
+		return panelTruck;
+	}
+
+
+	public JPVehicles getPanelMiniBus() {
+		return panelMiniBus;
+	}
+	
+	
 
 }

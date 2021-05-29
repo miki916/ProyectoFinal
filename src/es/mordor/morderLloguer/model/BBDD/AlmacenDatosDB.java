@@ -20,10 +20,16 @@ public interface AlmacenDatosDB {
 	
 	public boolean deleteCustomer(String dni);
 	public ArrayList<Customer> getCustomer();
-	
 	public boolean addCustomer(String[] data);
 	public boolean updateCustomer(Customer cliente); 
 	public  ArrayList<Customer> getCustomerOrderBy(String orderBy);
+	
+	public ArrayList<Vehicle> getVehiclesOrderBy(String orderBy, String table);
+	public ArrayList<Vehicle>  getCarsOrderBy(String orderBy);
+	public ArrayList<Vehicle>  getVanOrderBy(String orderBy);
+	public ArrayList<Vehicle>  getTruckOrderBy(String orderBy);
+	public ArrayList<Vehicle>  getMiniBusOrderBy(String orderBy);
+
 	
 	public boolean authenticate (String login,String password);
 	
