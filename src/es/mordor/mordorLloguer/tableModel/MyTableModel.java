@@ -1,4 +1,4 @@
-package es.mordor.mordorLloguer.controladores;
+package es.mordor.mordorLloguer.tableModel;
 
 import java.sql.Date;
 import java.util.ArrayList;

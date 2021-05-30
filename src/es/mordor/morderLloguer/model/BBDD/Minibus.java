@@ -2,7 +2,7 @@ package es.mordor.morderLloguer.model.BBDD;
 
 public class Minibus extends Vehicle{
 
-	private int width;
+	private int mma;
 	private int seating;
 	
 	
@@ -12,18 +12,18 @@ public class Minibus extends Vehicle{
 		super(registration, model, color, engine, displacement, status, drivingLicense);
 		
 		this.seating = seating;
-		this.width = width;
+		this.mma = width;
 		
 	}
 
 
-	public int getWidth() {
-		return width;
+	public int getMedida() {
+		return mma;
 	}
 
 
-	public void setWidth(int width) {
-		this.width = width;
+	public void setMMA(int width) {
+		this.mma = width;
 	}
 
 
@@ -34,6 +34,12 @@ public class Minibus extends Vehicle{
 
 	public void setSeating(int seating) {
 		this.seating = seating;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Minibus [width=" + mma + ", seating=" + seating + "]";
 	}
 	
 	

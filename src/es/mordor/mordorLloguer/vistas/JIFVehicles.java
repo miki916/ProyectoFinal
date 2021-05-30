@@ -19,6 +19,8 @@ public class JIFVehicles extends JInternalFrame {
 	 */
 	public JIFVehicles() {
 		
+		setClosable(true);
+
 		setBounds(100, 100, 867, 556);
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -27,8 +29,6 @@ public class JIFVehicles extends JInternalFrame {
 		panelCar = new JPVehicles();
 		tabbedPane.addTab("Coche", null, panelCar, null);
 		
-		
-			
 		panelVan = new JPVehicles();
 		tabbedPane.addTab("Furgoneta", null, panelVan, null);
 		

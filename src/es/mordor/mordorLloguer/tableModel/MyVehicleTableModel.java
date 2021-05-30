@@ -1,4 +1,4 @@
-package es.mordor.mordorLloguer.controladores;
+package es.mordor.mordorLloguer.tableModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +17,34 @@ public abstract class MyVehicleTableModel<T extends Vehicle> extends MyTableMode
 	public void setValueAt(Object value, int row, int col) {
 		// TODO Auto-generated method stub
 		
+		switch(col) {
+		
+			case 1:
+				data.get(row).setModel(value.toString());
+				break;
+			
+			case 2:
+				data.get(row).setColor(value.toString());
+				break;
+			
+			case 3: 
+				data.get(row).setEngine(value.toString());
+				break;
+			
+			case 4:
+				data.get(row).setDisplacement(Integer.valueOf( value.toString()));
+				break;
+			
+			case 5:
+				data.get(row).setStatus(value.toString());
+				break;
+								
+			case 6:
+				data.get(row).setDrivingLicense(value.toString());
+				break;
+		}
+	
+		fireTableCellUpdated(row,  col);
 		
 		
 	}

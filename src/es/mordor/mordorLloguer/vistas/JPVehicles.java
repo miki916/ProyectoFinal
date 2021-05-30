@@ -9,16 +9,23 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.JTextField;
 
 import com.alee.laf.table.WebTable;
+import com.alee.laf.text.WebTextField;
 
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+import java.awt.FlowLayout;
 
 public class JPVehicles extends JPanel {
-	private JTextField textFieldModel;
+	private WebTextField textFieldModel;
 	private WebTable table;
-	private JTextField textFieldRegistration;
+	private WebTextField textFieldRegistration;
 	private JComboBox<String> comboBoxEngine;
 	private JComboBox<String> comboBoxDrivingLicense;
+	private JPanel panel_2;
+	private JButton btnAdd;
+	private JButton btnRemove;
 
 	/**
 	 * Create the panel.
@@ -32,11 +39,14 @@ public class JPVehicles extends JPanel {
 		add(panel);
 		panel.setLayout(new MigLayout("", "[250][250][50][grow][50][grow]", "[]"));
 		
-		textFieldRegistration = new JTextField();
+		textFieldRegistration = new WebTextField();
+		textFieldRegistration.setInputPrompt("Matricula");
 		panel.add(textFieldRegistration, "cell 0 0,growx");
 		textFieldRegistration.setColumns(10);
 		
-		textFieldModel = new JTextField();
+		textFieldModel = new WebTextField();
+		textFieldModel.setInputPrompt("Marca");
+
 		panel.add(textFieldModel, "cell 1 0,growx");
 		textFieldModel.setColumns(10);
 		
@@ -45,10 +55,7 @@ public class JPVehicles extends JPanel {
 		
 		comboBoxEngine = new JComboBox<String>();
 		comboBoxEngine.addItem("All");
-		comboBoxEngine.addItem("");
-		comboBoxEngine.addItem("");
-		comboBoxEngine.addItem("");
-		comboBoxEngine.addItem("");
+	
 
 		
 		panel.add(comboBoxEngine, "cell 3 0,growx");
@@ -58,21 +65,13 @@ public class JPVehicles extends JPanel {
 		
 		comboBoxDrivingLicense = new JComboBox<String>();
 		comboBoxDrivingLicense.addItem("All");
-		comboBoxDrivingLicense.addItem("A");
-		comboBoxDrivingLicense.addItem("B");
-		comboBoxDrivingLicense.addItem("C");
-		comboBoxDrivingLicense.addItem("D");
-		comboBoxDrivingLicense.addItem("E");
-		comboBoxDrivingLicense.addItem("F");
-
 		
 		panel.add(comboBoxDrivingLicense, "cell 5 0,growx");
 		
 		
-		
-		
+	
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(10, 62, 826, 425);
+		panel_1.setBounds(10, 62, 826, 376);
 		add(panel_1);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -89,12 +88,37 @@ public class JPVehicles extends JPanel {
 		table = new WebTable();
 		scrollPane.setViewportView(table);
 		panel_1.setLayout(gl_panel_1);
+		
+		panel_2 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		panel_2.setBounds(10, 449, 826, 38);
+		add(panel_2);
+		
+		btnAdd = new JButton("A\u00F1adir");
+		panel_2.add(btnAdd);
+		
+		btnRemove = new JButton("Eliminar");
+		panel_2.add(btnRemove);
 
 	}
 
 	
-	
-	public JTextField getTextFieldRegistration() {
+
+
+	public JButton getBtnAdd() {
+		return btnAdd;
+	}
+
+
+
+	public JButton getBtnRemove() {
+		return btnRemove;
+	}
+
+
+
+	public WebTextField getTextFieldRegistration() {
 		return textFieldRegistration;
 	}
 
@@ -108,13 +132,11 @@ public class JPVehicles extends JPanel {
 	}
 
 
-	public JTextField getTextFieldModel() {
+	public WebTextField getTextFieldModel() {
 		return textFieldModel;
 	}
 
 	public WebTable getTable() {
 		return table;
 	}
-	
-	
 }

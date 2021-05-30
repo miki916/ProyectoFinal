@@ -1,4 +1,4 @@
-package es.mordor.mordorLloguer.controladores;
+package es.mordor.mordorLloguer.tableModel;
 
 import java.util.List;
 
@@ -18,6 +18,22 @@ public class MyTruckTableModel extends MyVehicleTableModel<Truck>{
 	@Override
 	public void setValueAt(Object value, int row, int col) {
 		
+		switch(col) {
+		
+		case 7: 
+			data.get(row).setMMA(Integer.valueOf( value.toString()));
+			break;
+			
+		case 8:
+			data.get(row).setnWheels(Integer.valueOf(value.toString()));
+			break;
+			
+		default: super.setValueAt(value, row, col);
+			
+	
+	}
+	
+	fireTableCellUpdated(row,  col);
 		
 	}
 	
@@ -27,9 +43,9 @@ public class MyTruckTableModel extends MyVehicleTableModel<Truck>{
 		
 		switch(col) {
 		
-			case 7: return data.get(row).getMMA();
+			case 7: return data.get(row).getnWheels();
 			
-			case 8: return data.get(row).getnWheels();
+			case 8: return data.get(row).getMMA();
 			
 			default: return super.getValueAt(row, col);
 		

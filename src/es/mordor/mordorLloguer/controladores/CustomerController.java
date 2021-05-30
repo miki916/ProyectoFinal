@@ -20,6 +20,7 @@ import com.alee.laf.table.editors.WebDateEditor;
 
 import es.mordor.morderLloguer.model.BBDD.*;
 import es.mordor.mordorLloguer.controladores.EmployeeController.MyTableModelEmpleados;
+import es.mordor.mordorLloguer.tableModel.MyTableModel;
 import es.mordor.mordorLloguer.vistas.*;
 
 public class CustomerController implements ActionListener, TableModelListener {

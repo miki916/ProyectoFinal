@@ -1,4 +1,4 @@
-package es.mordor.mordorLloguer.controladores;
+package es.mordor.mordorLloguer.tableModel;
 
 import java.util.List;
 
@@ -15,8 +15,21 @@ public class MyVanTableModel extends MyVehicleTableModel<Van> {
 	}
 	
 	@Override	
-	public void setValueAt(Object value, int row, int vol) {
+	public void setValueAt(Object value, int row, int col) {
 		
+		switch(col) {
+		
+		case 7: 
+			
+			data.get(row).setMMA(Integer.valueOf( value.toString()));
+
+			break;
+			
+		default: super.setValueAt(value, row, col);
+		
+	}
+
+	fireTableCellUpdated(row,  col);
 		
 	}
 	

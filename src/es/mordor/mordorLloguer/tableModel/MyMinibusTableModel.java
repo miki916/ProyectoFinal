@@ -1,4 +1,4 @@
-package es.mordor.mordorLloguer.controladores;
+package es.mordor.mordorLloguer.tableModel;
 
 import java.util.List;
 
@@ -18,7 +18,24 @@ public class MyMinibusTableModel extends MyVehicleTableModel<Minibus>{
 	@Override
 	public void setValueAt(Object value, int row, int col) {
 		
+		switch(col) {
 		
+			case 7: 
+				data.get(row).setMMA(Integer.valueOf( value.toString()));
+	
+				break;
+				
+			case 8:
+				
+				data.get(row).setSeating(Integer.valueOf(value.toString()));
+
+				break;
+				
+			default: super.setValueAt(value, row, col);
+			
+		}
+	
+		fireTableCellUpdated(row,  col);
 		
 	}
 	
@@ -31,7 +48,7 @@ public class MyMinibusTableModel extends MyVehicleTableModel<Minibus>{
 		
 			case 7: return data.get(row).getSeating();
 			
-			case 8: return data.get(row).getWidth();
+			case 8: return data.get(row).getMedida();
 			
 			default: return super.getValueAt(row, col);
 		

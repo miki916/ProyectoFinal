@@ -29,6 +29,11 @@ public interface AlmacenDatosDB {
 	public ArrayList<Vehicle>  getVanOrderBy(String orderBy);
 	public ArrayList<Vehicle>  getTruckOrderBy(String orderBy);
 	public ArrayList<Vehicle>  getMiniBusOrderBy(String orderBy);
+	public boolean  updateVehicles(Vehicle v);
+	public boolean deleteVehicles(Vehicle v);
+
+
+
 
 	
 	public boolean authenticate (String login,String password);

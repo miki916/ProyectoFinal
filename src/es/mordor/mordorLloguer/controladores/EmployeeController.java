@@ -26,6 +26,7 @@ import com.alee.laf.table.editors.WebDateEditor;
 import com.github.lgooddatepicker.components.DatePicker;
 
 import es.mordor.morderLloguer.model.BBDD.*;
+import es.mordor.mordorLloguer.tableModel.MyTableModel;
 import es.mordor.mordorLloguer.vistas.*;
 
 public class EmployeeController implements ActionListener, TableModelListener{
