@@ -1,15 +1,17 @@
 package es.mordor.morderLloguer.model.BBDD;
 
+import java.util.Date;
+
 public class Minibus extends Vehicle{
 
 	private int mma;
 	private int seating;
 	
 	
-	public Minibus(String registration, String model, String color, String engine, int displacement, String status,
+	public Minibus(String registration, int dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
 			String drivingLicense, int width, int seating) {
 		
-		super(registration, model, color, engine, displacement, status, drivingLicense);
+		super(registration,dayPrice, model, color, engine, displacement,shopDay, status, drivingLicense);
 		
 		this.seating = seating;
 		this.mma = width;

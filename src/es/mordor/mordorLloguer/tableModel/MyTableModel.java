@@ -69,10 +69,11 @@ public abstract class MyTableModel<T> extends AbstractTableModel{
 		return elements;
 	}
 	
-	public void removeElement(T element) {
+	public T removeElement(T element) {
 		int index=data.indexOf(element);
 		data.remove(element);
 		fireTableRowsDeleted(index,index);
+		return element;
 	}
 
 	

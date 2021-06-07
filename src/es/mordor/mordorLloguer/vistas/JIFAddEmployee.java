@@ -30,6 +30,7 @@ import javax.swing.JButton;
 
 @SuppressWarnings("serial")
 public class JIFAddEmployee extends JInternalFrame {
+	
 	private JPanel panel_1;
 	private JButton btnAdd;
 	private JButton btnCancel;

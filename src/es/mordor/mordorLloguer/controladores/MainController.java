@@ -22,9 +22,11 @@ public class MainController implements ActionListener{
 	private JIFEmployees vistaEmpleados;
 	private JIFCustomer vistaClientes;
 	private JIFVehicles vistaVehiculos;
+	private JIFInvoice vistaFacturas;
 	private EmployeeController controladorEmpleados;
 	private CustomerController controladorClientes;
 	private VehiclesController controladorVehiculos;
+	private InvoiceController controladorFacturas;
 
 	
 	public MainController(JFMain vistaPrincipal, AlmacenDatosDB almacenDatos ) {
@@ -40,22 +42,27 @@ public class MainController implements ActionListener{
 	
 	private void incializar() {
 		// TODO Auto-generated method stub
-		vista.getBtnLogOut().setEnabled(false);
-		vista.getBtnEmpleados().setEnabled(false);
-		vista.getBtnClientes().setEnabled(false);
-		vista.getBtnRent().setEnabled(false);
-		
+//		vista.getBtnLogOut().setEnabled(false);
+//		vista.getBtnEmpleados().setEnabled(false);
+//		vista.getBtnClientes().setEnabled(false);
+//		vista.getBtnRent().setEnabled(false);
+//		vista.getBtnFacturas().setEnabled(false);
+//		
 		vista.getBtnLogin().addActionListener(this);
 		vista.getBtnLogOut().addActionListener(this);
 		vista.getBtnEmpleados().addActionListener(this);
 		vista.getBtnClientes().addActionListener(this);
 		vista.getBtnRent().addActionListener(this);
+		vista.getBtnFacturas().addActionListener(this);
+
 		
 		vista.getBtnLogin().setActionCommand("AbrirLogin");
 		vista.getBtnLogOut().setActionCommand("Logout");
 		vista.getBtnEmpleados().setActionCommand("AbrirEmpleados");
 		vista.getBtnClientes().setActionCommand("OpenClients");
 		vista.getBtnRent().setActionCommand("OpenRent");
+		vista.getBtnFacturas().setActionCommand("Invoice");
+
 
 		
 		
@@ -100,10 +107,35 @@ public class MainController implements ActionListener{
 			
 			openJIFRent();
 			
+		}else if(command == "Invoice") {
+			
+			openJIFInvoice();
+			
 		}
 		
 		
 	}
+
+
+	private void openJIFInvoice() {
+		// TODO Auto-generated method stub
+		
+		if(!open(vistaFacturas)) {
+			
+			vistaFacturas = new JIFInvoice();
+			controladorFacturas = new InvoiceController(vistaFacturas,almacenDatos);
+			controladorFacturas.go();
+			
+			
+		}else {
+			
+			JOptionPane.showMessageDialog(vista, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
+			
+		}
+		
+		
+	}
+
 
 
 	private void openJIFRent() {

@@ -20,11 +20,11 @@ public class MyTruckTableModel extends MyVehicleTableModel<Truck>{
 		
 		switch(col) {
 		
-		case 7: 
+		case 9: 
 			data.get(row).setMMA(Integer.valueOf( value.toString()));
 			break;
 			
-		case 8:
+		case 10:
 			data.get(row).setnWheels(Integer.valueOf(value.toString()));
 			break;
 			
@@ -43,9 +43,9 @@ public class MyTruckTableModel extends MyVehicleTableModel<Truck>{
 		
 		switch(col) {
 		
-			case 7: return data.get(row).getnWheels();
+			case 9: return data.get(row).getnWheels();
 			
-			case 8: return data.get(row).getMMA();
+			case 10: return data.get(row).getMMA();
 			
 			default: return super.getValueAt(row, col);
 		

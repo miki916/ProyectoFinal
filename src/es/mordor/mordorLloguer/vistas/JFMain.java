@@ -24,11 +24,13 @@ public class JFMain extends JFrame {
 	private JDesktopPane desktopPane;
 	private JButton btnClientes;
 	private JButton btnRent;
+	private JButton btnFacturas;
 
 	/**
 	 * Create the frame.
 	 */
 	public JFMain() {
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 936, 649);
 		
@@ -56,6 +58,10 @@ public class JFMain extends JFrame {
 		ImageIcon imageIconResized = new ImageIcon(getScaledImage(image,32));
 			btnRent.setIcon(imageIconResized);
 		menuBar.add(btnRent);
+		
+		btnFacturas = new JButton("Facturas");
+		btnFacturas.setIcon(new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/invoice.png")));
+		menuBar.add(btnFacturas);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -79,6 +85,10 @@ public class JFMain extends JFrame {
 	    return resizedImg;
 	}
 	
+	
+	public JButton getBtnFacturas() {
+		return btnFacturas;
+	}
 
 	public JButton getBtnClientes() {
 		return btnClientes;

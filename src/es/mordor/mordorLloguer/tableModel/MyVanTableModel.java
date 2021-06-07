@@ -19,7 +19,7 @@ public class MyVanTableModel extends MyVehicleTableModel<Van> {
 		
 		switch(col) {
 		
-		case 7: 
+		case 9: 
 			
 			data.get(row).setMMA(Integer.valueOf( value.toString()));
 
@@ -40,7 +40,7 @@ public class MyVanTableModel extends MyVehicleTableModel<Van> {
 		
 		switch(col) {
 		
-			case 7: return data.get(row).getMMA();
+			case 9: return data.get(row).getMMA();
 					
 			default: return super.getValueAt(row, col);
 		

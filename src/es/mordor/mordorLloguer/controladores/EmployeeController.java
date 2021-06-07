@@ -157,6 +157,9 @@ public class EmployeeController implements ActionListener, TableModelListener{
 
 	private void removeRow() {
 		
+		 int input = JOptionPane.showConfirmDialog(null, "Estas seguro?", "Elige una opcion...",JOptionPane.YES_NO_OPTION);
+
+		
 		int row = vistaEmpleados.getTable().getSelectedRow();
 		Employee e = (Employee) mtm.getElement(row);
 		almacenDatos.deleteEmployee(e.getDNI());

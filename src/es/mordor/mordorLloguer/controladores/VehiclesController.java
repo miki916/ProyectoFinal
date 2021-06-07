@@ -5,11 +5,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -34,6 +36,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 	private MyVehicleTableModel mtmVan;
 	private MyVehicleTableModel mtmTruck;
 	private MyVehicleTableModel mtmMiniBus;
+	private JIFAddVehicle vistaJIFVehicle;
 	private VehiclesController controller;
 	private ArrayList<Car> cars = new ArrayList<Car>();
 	private ArrayList<Van> vans = new ArrayList<Van>();
@@ -51,191 +54,334 @@ public class VehiclesController implements ActionListener, TableModelListener {
 		
 	}
 	
-	private void inicializar() {
-		// TODO Auto-generated method stub
-		
-		vista.getPanelCar().getTextFieldModel().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filterC(); });
-		vista.getPanelCar().getTextFieldRegistration().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filterC(); });
-		vista.getPanelCar().getComboBoxEngine().addActionListener(this);
-		vista.getPanelCar().getComboBoxDrivingLicense().addActionListener(this);
-		vista.getPanelCar().getBtnAdd().addActionListener(this);
-		vista.getPanelCar().getBtnRemove().addActionListener(this);
-		vista.getPanelCar().getBtnAdd().setActionCommand("OpenNewCar");
-		vista.getPanelCar().getBtnRemove().setActionCommand("RemoveCar");
-		vista.getPanelCar().getComboBoxEngine().setActionCommand("ModelCar");
-		vista.getPanelCar().getComboBoxDrivingLicense().setActionCommand("RegistrationCar");
-	
-		
-		vista.getPanelVan().getTextFieldModel().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filterV(); });
-		vista.getPanelVan().getTextFieldRegistration().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filterV(); });
-		vista.getPanelVan().getComboBoxEngine().addActionListener(this);
-		vista.getPanelVan().getComboBoxDrivingLicense().addActionListener(this);
-		vista.getPanelVan().getComboBoxEngine().setActionCommand("ModelVan");
-		vista.getPanelVan().getComboBoxDrivingLicense().setActionCommand("RegistrationVan");
-		
-		vista.getPanelTruck().getTextFieldModel().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filterT(); });
-		vista.getPanelTruck().getTextFieldRegistration().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filterT(); });
-		vista.getPanelTruck().getComboBoxEngine().addActionListener(this);
-		vista.getPanelTruck().getComboBoxDrivingLicense().addActionListener(this);
-		vista.getPanelTruck().getComboBoxEngine().setActionCommand("ModelTruck");
-		vista.getPanelTruck().getComboBoxDrivingLicense().setActionCommand("RegistrationTruck");
-		
-		vista.getPanelMiniBus().getTextFieldModel().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filterM(); });
-		vista.getPanelMiniBus().getTextFieldRegistration().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filterM(); });
-		vista.getPanelMiniBus().getComboBoxEngine().addActionListener(this);
-		vista.getPanelMiniBus().getComboBoxDrivingLicense().addActionListener(this);
-		vista.getPanelMiniBus().getComboBoxEngine().setActionCommand("ModelMinibus");
-		vista.getPanelMiniBus().getComboBoxDrivingLicense().setActionCommand("RegistrationMinibus");
-			
-	}
-	
-	private void filterM() {
-		// TODO Auto-generated method stub
-				
-		ArrayList<Minibus> result;
-		
-		result = (ArrayList<Minibus>) miniBus.stream()
-		.filter((c) -> c.getModel().toUpperCase().contains(vista.getPanelMiniBus().getTextFieldModel().getText().toUpperCase()))
-		.filter((c) -> c.getRegistration().toUpperCase().contains(vista.getPanelMiniBus().getTextFieldRegistration().getText().toUpperCase()))
-		.filter((c) -> c.getEngine().toUpperCase().contains(vista.getPanelMiniBus().getComboBoxEngine().getSelectedItem().toString().toUpperCase()) 
-				|| vista.getPanelMiniBus().getComboBoxEngine().getSelectedItem().toString().equals("All"))
-		.filter((c) -> c.getDrivingLicense().toUpperCase().contains(vista.getPanelMiniBus().getComboBoxDrivingLicense().getSelectedItem().toString().toUpperCase()) || 
-				vista.getPanelMiniBus().getComboBoxDrivingLicense().getSelectedItem().toString().equals("All") )
-		.collect(Collectors.toList());
-		
-
-	mtmMiniBus = new MyMinibusTableModel(result);
-	vista.getPanelMiniBus().getTable().setModel(mtmMiniBus);
-		
-		
-	}
-
-	private void filterT() {
-		// TODO Auto-generated method stub
-		
-		ArrayList<Truck> result;
-		
-		result = (ArrayList<Truck>) trucks.stream()
-		.filter((c) -> c.getModel().toUpperCase().contains(vista.getPanelTruck().getTextFieldModel().getText().toUpperCase()))
-		.filter((c) -> c.getRegistration().toUpperCase().contains(vista.getPanelTruck().getTextFieldRegistration().getText().toUpperCase()))
-		.filter((c) -> c.getEngine().toUpperCase().contains(vista.getPanelTruck().getComboBoxEngine().getSelectedItem().toString().toUpperCase()) 
-				|| vista.getPanelTruck().getComboBoxEngine().getSelectedItem().toString().equals("All"))
-		.filter((c) -> c.getDrivingLicense().toUpperCase().contains(vista.getPanelTruck().getComboBoxDrivingLicense().getSelectedItem().toString().toUpperCase()) || 
-				vista.getPanelTruck().getComboBoxDrivingLicense().getSelectedItem().toString().equals("All") )
-		.collect(Collectors.toList());
-		
-
-	mtmTruck = new MyTruckTableModel(result);
-	vista.getPanelTruck().getTable().setModel(mtmTruck);
-		
-	}
-
-	private void filterV() {
-		// TODO Auto-generated method stub
-		
-	ArrayList<Van> result;
-		
-		result = (ArrayList<Van>) vans.stream()
-		.filter((c) -> c.getModel().toUpperCase().contains(vista.getPanelVan().getTextFieldModel().getText().toUpperCase()))
-		.filter((c) -> c.getRegistration().toUpperCase().contains(vista.getPanelVan().getTextFieldRegistration().getText().toUpperCase()))
-		.filter((c) -> c.getEngine().toUpperCase().contains(vista.getPanelVan().getComboBoxEngine().getSelectedItem().toString().toUpperCase()) 
-				|| vista.getPanelVan().getComboBoxEngine().getSelectedItem().toString().equals("All"))
-		.filter((c) -> c.getDrivingLicense().toUpperCase().contains(vista.getPanelVan().getComboBoxDrivingLicense().getSelectedItem().toString().toUpperCase()) || 
-				vista.getPanelVan().getComboBoxDrivingLicense().getSelectedItem().toString().equals("All") )
-		.collect(Collectors.toList());
-		
-
-	mtmVan = new MyVanTableModel(result);
-	vista.getPanelVan().getTable().setModel(mtmVan);
-		
-	}
-
-	private void filterC() {
-		// TODO Auto-generated method stub
-		
-		ArrayList<Car> result;
-		
-		result = (ArrayList<Car>) cars.stream()
-		.filter((c) -> c.getModel().toUpperCase().contains(vista.getPanelCar().getTextFieldModel().getText().toUpperCase()))
-		.filter((c) -> c.getRegistration().toUpperCase().contains(vista.getPanelCar().getTextFieldRegistration().getText().toUpperCase()))
-		.filter((c) -> c.getEngine().toUpperCase().contains(vista.getPanelCar().getComboBoxEngine().getSelectedItem().toString().toUpperCase()) 
-				|| vista.getPanelCar().getComboBoxEngine().getSelectedItem().toString().equals("All"))
-		.filter((c) -> c.getDrivingLicense().toUpperCase().contains(vista.getPanelCar().getComboBoxDrivingLicense().getSelectedItem().toString().toUpperCase()) || 
-				vista.getPanelCar().getComboBoxDrivingLicense().getSelectedItem().toString().equals("All") )
-		.collect(Collectors.toList());
-		
-
-	mtmCar = new MyCarTableModel(result);
-	vista.getPanelCar().getTable().setModel(mtmCar);
-		
-		
-	}
-
 	public void go() {
 		
 		MainController.addJIF(vista);
-		sort();	
+		update();	
 	}
-
+	
+	private void inicializar() {
+		// TODO Auto-generated method stub
+		
+		for(Component c : vista.getTabbedPane().getComponents()) {
+			
+			if(c instanceof JPVehicles) {
+			
+				((JPVehicles) c).getTextFieldModel().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filter(); });
+				((JPVehicles) c).getTextFieldRegistration().getDocument().addDocumentListener((SimpleDocumentListener) e -> { filter(); });
+				((JPVehicles) c).getComboBoxEngine().addActionListener(this);
+				((JPVehicles) c).getComboBoxDrivingLicense().addActionListener(this);
+				((JPVehicles) c).getBtnAdd().addActionListener(this);
+				((JPVehicles) c).getBtnRemove().addActionListener(this);
+				((JPVehicles) c).getBtnAdd().setActionCommand("OpenNewVehicle");
+				((JPVehicles) c).getBtnRemove().setActionCommand("Remove");
+				((JPVehicles) c).getComboBoxEngine().setActionCommand("Model");
+				((JPVehicles) c).getComboBoxDrivingLicense().setActionCommand("Registration");
+			}
+			
+		}
+		
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
 		String command = e.getActionCommand();
 		
-		if(command.equals("ModelCar") || command.equals("RegistrationCar")) 
+		if(command.equals("Model") || command.equals("Registration")) 
 			
-			filterC();
+			filter();
+				
+		else if(command.equals("Remove")) 
 			
-		else if(command.equals("ModelVan") || command.equals("RegistrationVan")) 
-			
-			filterV();
-			
-		else if(command.equals("ModelTruck") || command.equals("RegistrationTruck")) 
+			removeRow();
 		
-			filterT();
+		else if(command.equals("OpenNewVehicle")) 
 			
-		else if(command.equals("ModelMinibus") || command.equals("RegistrationMinibus")) 
+			openNewVehicle();
+		
+		else if(command.equals("Cancel"))
 			
-			filterM();
+			vistaJIFVehicle.dispose();
 		
-		else if(command.equals("RemoveCar")) 
+		else if(command.equals("Add"))			
+		
+			addNewVehicle();
+		
 			
-			removeRow(mtmCar, cars.get(0), vista.getPanelCar());
-		
-		
 
 	}
 	
-	private void removeRow(MyVehicleTableModel mtm, Vehicle e, JPVehicles JPv ) {
+	private void addNewVehicle() {
 		// TODO Auto-generated method stub
-		int row = JPv.getTable().getSelectedRow();
+	
+			SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
+				
+				@Override
+				protected Boolean doInBackground() throws Exception {
+					// TODO Auto-generated method stub
+					
+					 String registration = vistaJIFVehicle.getTextFieldRegistration().getText();
+					 String priceDay = vistaJIFVehicle.getSpinnerPrecio().getValue().toString();
+					 String model = vistaJIFVehicle.getTextFieldModel().getText();
+					 String color = vistaJIFVehicle.getTextFieldColor().getText();
+					 String engine= vistaJIFVehicle.getComboBoxEngine().getSelectedItem().toString();
+					 String displacement= vistaJIFVehicle.getSpinnerDisplacement().getValue().toString();
+					 String shopDay = vistaJIFVehicle.getDate().toString();
+					 String status= vistaJIFVehicle.getComboBoxStatus().getSelectedItem().toString();
+					 String drivingLicense= vistaJIFVehicle.getComboBoxDrivingLicense().getSelectedItem().toString();
+					 
+					 ArrayList<String> v = new ArrayList<String>
+					 (Arrays.asList(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense));
+					
+					int index = vista.getTabbedPane().getSelectedIndex();
+					boolean error = false;
+					
+					try {
+						
+						switch(index) {
+						
+							case 0:
+							
+								v.add(vistaJIFVehicle.getTextFieldOpcion1().getText());
+								v.add(vistaJIFVehicle.getTextFieldOpcion2().getText());
+								error = almacenDatos.addVehicle("COCHE", v);
+								
+								break;
+							
+							case 1: 
+								
+								v.add(vistaJIFVehicle.getTextFieldOpcion1().getText());
+								error = almacenDatos.addVehicle("FURGONETA", v);
+	
+								break;
+							
+							case 2:
+								
+								v.add(vistaJIFVehicle.getTextFieldOpcion1().getText());
+								v.add(vistaJIFVehicle.getTextFieldOpcion2().getText());
+								error = almacenDatos.addVehicle("CAMION", v);
+	
+								break;
+								
+							case 3:
+								
+								v.add(vistaJIFVehicle.getTextFieldOpcion1().getText());
+								v.add(vistaJIFVehicle.getTextFieldOpcion2().getText());
+								error = almacenDatos.addVehicle("MICROBUS", v);
+	
+								break;
+						}
+						
+						
+					}catch(Exception e) {
+						
+						e.printStackTrace();
+						
+					}
+					
+					if(error) {
+						
+						update();
+						JOptionPane.showMessageDialog(vista, "Empleado añadido correctamente", "Succes", JOptionPane.INFORMATION_MESSAGE);
+						vistaJIFVehicle.dispose();			
+					}else {
+						
+						JOptionPane.showMessageDialog(vista, "Error al añadir al empleado", "Error", JOptionPane.INFORMATION_MESSAGE);
+
+						
+					}
+					
+			
+					
+					return null;
+				}
+				
+				
+				
+				
+			};
+
+			task.execute();					
+	
 		
-		Vehicle v = null;
+			
 		
-		if(e instanceof Car) {
-			
-			 v = (Car) mtm.getElement(row);
-			
-		}else if( e instanceof Van) {
-			
-			 v = (Van) mtm.getElement(row);
-			
-		}else if( e instanceof Truck) {
-			
-			 v = (Truck) mtm.getElement(row);
-			
-		}else if (e instanceof Minibus) {
-			
-			 v = (Minibus) mtm.getElement(row);
-			
-		}
 		
-		almacenDatos.deleteVehicles(v);
-		mtm.removeElement(v);
 	}
 
-	private void sort() {
+	private void openNewVehicle() {
+		// TODO Auto-generated method stub
+		
+		int index = vista.getTabbedPane().getSelectedIndex();
+
+		
+		if(!MainController.open(vistaJIFVehicle)) {
+			vistaJIFVehicle = new JIFAddVehicle();
+			MainController.addJIF(vistaJIFVehicle);
+			
+			switch(index) {
+			
+				case 0: 
+					vistaJIFVehicle.getTextFieldOpcion1().setInputPrompt("Num Plazas");
+					vistaJIFVehicle.getTextFieldOpcion2().setInputPrompt("Num Puertas");
+					break;
+				case 1:
+					vistaJIFVehicle.getTextFieldOpcion1().setInputPrompt("MMA");
+					vistaJIFVehicle.getTextFieldOpcion2().setVisible(false);
+					break;
+				case 2:
+					vistaJIFVehicle.getTextFieldOpcion1().setInputPrompt("Num Ruedas");
+					vistaJIFVehicle.getTextFieldOpcion2().setInputPrompt("MMA");
+					break;
+				case 3:
+					vistaJIFVehicle.getTextFieldOpcion1().setInputPrompt("Num Plazas");
+					vistaJIFVehicle.getTextFieldOpcion2().setInputPrompt("Medidas");
+					break;
+										
+			
+			}
+			
+			
+			vistaJIFVehicle.getBtnCancel().addActionListener(this);
+			vistaJIFVehicle.getBtnAdd().addActionListener(this);
+			vistaJIFVehicle.getBtnAdd().setActionCommand("Add");
+			vistaJIFVehicle.getBtnCancel().setActionCommand("Cancel");
+				
+				
+		}else 			
+			JOptionPane.showMessageDialog(vista, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
+		
+		
+		
+	}
+
+	private void filter() {
+		// TODO Auto-generated method stub
+		
+		int index = vista.getTabbedPane().getSelectedIndex();
+		ArrayList<Vehicle> result;
+		ArrayList<Vehicle> vehicle;
+		
+		switch(index) {
+			
+			case 0 :
+					vehicle =  (ArrayList<Vehicle>) cars.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
+					result = arrayListF(vehicle, vista.getPanelCar());		
+					ArrayList<Car> rCar = (ArrayList<Car>) result.stream().map((v)->(Car)v).collect(Collectors.toList()); 	
+					mtmCar = new MyCarTableModel(rCar);
+					vista.getPanelCar().getTable().setModel(mtmCar);
+					break;
+					
+			case 1:
+					vehicle =  (ArrayList<Vehicle>) vans.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
+					result = arrayListF(vehicle, vista.getPanelVan());		
+					ArrayList<Van> rVan = (ArrayList<Van>) result.stream().map((v)->(Van)v).collect(Collectors.toList()); 	
+					mtmVan = new MyVanTableModel(rVan);
+					vista.getPanelVan().getTable().setModel(mtmVan);
+					break;
+			
+			case 2: 
+					vehicle =  (ArrayList<Vehicle>) trucks.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
+					result = arrayListF(vehicle, vista.getPanelTruck());		
+					ArrayList<Truck> rTruck = (ArrayList<Truck>) result.stream().map((v)->(Truck)v).collect(Collectors.toList()); 	
+					mtmTruck = new MyTruckTableModel(rTruck);
+					vista.getPanelTruck().getTable().setModel(mtmTruck);
+					break;
+			
+			case 3: 
+					vehicle =  (ArrayList<Vehicle>) miniBus.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
+					result = arrayListF(vehicle, vista.getPanelMiniBus());		
+					ArrayList<Minibus> rMiniB = (ArrayList<Minibus>) result.stream().map((v)->(Minibus)v).collect(Collectors.toList()); 	
+					mtmMiniBus = new MyMinibusTableModel(rMiniB);
+					vista.getPanelMiniBus().getTable().setModel(mtmMiniBus);
+					break;
+
+		}
+
+	}
+	
+	
+
+	private ArrayList<Vehicle> arrayListF(ArrayList<Vehicle> vehicle, JPVehicles JPv) {
+		
+		ArrayList<Vehicle> result;
+		result = (ArrayList<Vehicle>) vehicle.stream()
+		.filter((c) -> ((Vehicle) c).getModel().toUpperCase().contains(JPv.getTextFieldModel().getText().toUpperCase()))
+		.filter((c) -> ((Vehicle) c).getRegistration().toUpperCase().contains(JPv.getTextFieldRegistration().getText().toUpperCase()))
+		.filter((c) -> ((Vehicle) c).getEngine().toUpperCase().contains(JPv.getComboBoxEngine().getSelectedItem().toString().toUpperCase()) 
+				|| JPv.getComboBoxEngine().getSelectedItem().toString().equals("All"))
+		.filter((c) -> ((Vehicle) c).getDrivingLicense().toUpperCase().contains(JPv.getComboBoxDrivingLicense().getSelectedItem().toString().toUpperCase()) || 
+				JPv.getComboBoxDrivingLicense().getSelectedItem().toString().equals("All") )
+		.collect(Collectors.toList());
+		return result;
+	}
+	
+	
+			
+	private void removeRow() {
+		// TODO Auto-generated method stub
+		
+		 int input = JOptionPane.showConfirmDialog(null, "Estas seguro?", "Elige una opcion...",JOptionPane.YES_NO_OPTION);
+		
+		if(input == 0) {
+			int row = -1;
+			int index = vista.getTabbedPane().getSelectedIndex();
+			Vehicle v = null;
+			JPVehicles JPv = null;
+			String table =" ";
+			
+			switch(index) {
+			
+				case 0: 
+					JPv = vista.getPanelCar();
+					row = JPv.getTable().getSelectedRow();
+					v = (Car) mtmCar.getElement(row);
+					almacenDatos.deleteVehicles("COCHE",v);
+					mtmCar.removeElement(v);
+					break;
+					
+				case 1:
+					
+					JPv = vista.getPanelVan();
+					row = JPv.getTable().getSelectedRow();
+					v = (Van) mtmVan.getElement(row);
+					almacenDatos.deleteVehicles("FURGONETA",v);
+					mtmVan.removeElement(v);
+	
+					break;
+				
+				case 2:
+					
+					JPv = vista.getPanelTruck();
+					row = JPv.getTable().getSelectedRow();
+					v = (Truck) mtmTruck.getElement(row);
+					almacenDatos.deleteVehicles("CAMION",v);
+					mtmTruck.removeElement(v);
+				
+	
+					break;
+				
+				case 3:
+					
+					JPv = vista.getPanelMiniBus();
+					row = JPv.getTable().getSelectedRow();
+					v = (Minibus) mtmMiniBus.getElement(row);	
+					almacenDatos.deleteVehicles("MICROBUS",v);
+					mtmMiniBus.removeElement(v);
+					
+	
+					break;
+			
+			}
+		}
+				
+	}
+	
+
+	
+	private void update() {
 		// TODO Auto-generated method stub
 		
 		SwingWorker<Boolean,Void> task = new SwingWorker<Boolean,Void>(){
@@ -279,6 +425,16 @@ public class VehiclesController implements ActionListener, TableModelListener {
 					
 					try {
 						
+						for(Component c : vista.getTabbedPane().getComponents()) {
+							
+							
+							if(c instanceof JPVehicles) {
+							
+								((JPVehicles) c).getTable().setDefaultEditor(Date.class, new WebDateEditor());
+								
+							}
+							
+						}
 											
 						mtmCar=new MyCarTableModel(cars);
 						vista.getPanelCar().getTable().setModel(mtmCar);
@@ -302,6 +458,8 @@ public class VehiclesController implements ActionListener, TableModelListener {
 						vista.getPanelMiniBus().getTable().setModel(mtmMiniBus);
 						mtmMiniBus.addTableModelListener(controller);
 						comboBox( miniBus.get(0), vista.getPanelMiniBus());
+						
+						
 
 															
 						
@@ -380,7 +538,10 @@ public class VehiclesController implements ActionListener, TableModelListener {
 		
 	}
 
+	
+	
 	@Override
+	
 	public void tableChanged(TableModelEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getType() == TableModelEvent.UPDATE) {

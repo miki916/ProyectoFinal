@@ -21,11 +21,11 @@ public class MyCarTableModel extends MyVehicleTableModel<Car>{
 		
 		switch(col) {
 		
-			case 7: 
+			case 9: 
 				data.get(row).setDoors(Integer.valueOf( value.toString()));
 				break;
 				
-			case 8:
+			case 10:
 				data.get(row).setSeating(Integer.valueOf(value.toString()));
 				break;
 				
@@ -45,9 +45,9 @@ public class MyCarTableModel extends MyVehicleTableModel<Car>{
 		
 		switch(col) {
 		
-			case 7: return data.get(row).getSeating();
-			
-			case 8: return data.get(row).getDoors();
+			case 9: return data.get(row).getSeating();
+		
+			case 10: return data.get(row).getDoors();
 			
 			default: return super.getValueAt(row, col);
 		

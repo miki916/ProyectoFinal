@@ -99,15 +99,11 @@ public class CustomerController implements ActionListener, TableModelListener {
 		
 	}
 
-
 	public void go() {
 			
 			MainController.addJIF(vista);
 			sort();	
 	}
-
-	
-
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -217,10 +213,17 @@ public class CustomerController implements ActionListener, TableModelListener {
 	private void removeRow() {
 		// TODO Auto-generated method stub
 		
-		int row = vista.getTable().getSelectedRow();
-		Customer e = (Customer) mtm.getElement(row);
-		almacenDatos.deleteCustomer(e.getDNI());
-		mtm.removeElement(e);
+		 int input = JOptionPane.showConfirmDialog(null, "Estas seguro?", "Elige una opcion...",JOptionPane.YES_NO_OPTION);
+		 
+		 if(input == 0) {
+			 
+				int row = vista.getTable().getSelectedRow();
+				Customer e = (Customer) mtm.getElement(row);
+				almacenDatos.deleteCustomer(e.getDNI());
+				mtm.removeElement(e); 
+			 
+		 }
+	
 		
 	}
 

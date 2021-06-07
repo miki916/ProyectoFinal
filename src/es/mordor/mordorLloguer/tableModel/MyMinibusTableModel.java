@@ -20,12 +20,12 @@ public class MyMinibusTableModel extends MyVehicleTableModel<Minibus>{
 		
 		switch(col) {
 		
-			case 7: 
+			case 9: 
 				data.get(row).setMMA(Integer.valueOf( value.toString()));
 	
 				break;
 				
-			case 8:
+			case 10:
 				
 				data.get(row).setSeating(Integer.valueOf(value.toString()));
 
@@ -46,9 +46,9 @@ public class MyMinibusTableModel extends MyVehicleTableModel<Minibus>{
 		
 		switch(col) {
 		
-			case 7: return data.get(row).getSeating();
+			case 9: return data.get(row).getSeating();
 			
-			case 8: return data.get(row).getMedida();
+			case 10: return data.get(row).getMedida();
 			
 			default: return super.getValueAt(row, col);
 		

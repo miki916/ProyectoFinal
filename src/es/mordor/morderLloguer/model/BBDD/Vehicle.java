@@ -1,27 +1,58 @@
 package es.mordor.morderLloguer.model.BBDD;
 
+import java.util.Date;
+
 public abstract class Vehicle {
 	
 	private String registration;
+	private int dayPrice;
 	private String model;
 	private String color;
 	private String engine;
 	private int displacement;
+	private Date shopDay;
 	private String status;
 	private String drivingLicense;
 	
 	
-	public Vehicle(String registration, String model, String color, String engine, int displacement, String status,
+	public Vehicle(String registration, int dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
 			String drivingLicense) {
 		super();
 		this.registration = registration;
+		this.dayPrice = dayPrice;
 		this.model = model;
 		this.color = color;
 		this.engine = engine;
 		this.displacement = displacement;
+		this.shopDay = shopDay;
 		this.status = status;
 		this.drivingLicense = drivingLicense;
 	}
+	
+	
+
+	public int getDayPrice() {
+		return dayPrice;
+	}
+
+
+
+	public void setDayPrice(int dayPrice) {
+		this.dayPrice = dayPrice;
+	}
+
+
+
+	public Date getShopDay() {
+		return shopDay;
+	}
+
+
+
+	public void setShopDay(Date shopDay) {
+		this.shopDay = shopDay;
+	}
+
 
 
 	public String getRegistration() {

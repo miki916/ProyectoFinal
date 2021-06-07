@@ -1,13 +1,15 @@
 package es.mordor.morderLloguer.model.BBDD;
 
+import java.util.Date;
+
 public class Van extends Vehicle {
 	
 	private int MMA;
 		
-	public Van(String registration, String model, String color, String engine, int displacement, String status,
+	public Van(String registration, int dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
 			String drivingLicense, int MMA) {
 		
-		super(registration, model, color, engine, displacement, status, drivingLicense);
+		super(registration,dayPrice, model, color, engine, displacement,shopDay, status, drivingLicense);
 		
 		this.MMA = MMA;
 	

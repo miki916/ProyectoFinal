@@ -1,5 +1,6 @@
 package es.mordor.morderLloguer.model.BBDD;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -9,6 +10,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.sql.DataSource;
+
+import oracle.jdbc.OracleTypes;
 
 
 
@@ -445,9 +448,8 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		DataSource ds = MyDataSource.getOracleDataSource();
 		
 		String sql = "SELECT * FROM VEHICULO, " + table + " WHERE VEHICULO.MATRICULA = " + table + ".MATRICULA";
-		
-		
-		
+	
+	
 		if(orderBy != null)
 			sql += " ORDER BY " + "VEHICULO." + orderBy + " ASC";
 		
@@ -459,35 +461,37 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 			
 			while(rs.next()) {
 			
-				String[] v = { rs.getString("MATRICULA"), rs.getString("MARCA"), rs.getString("COLOR"),
+				String[] v = { rs.getString("MATRICULA"),  rs.getString("MARCA"), rs.getString("COLOR"),
 						rs.getString("MOTOR"), rs.getString("ESTADO"), rs.getString("CARNET")};
 				
-				int cilindrada =  rs.getInt("CILINDRADA");
+				int[] c = {rs.getInt("PRECIODIA"),rs.getInt("CILINDRADA")};
+				
+				Date d = rs.getDate("FECHAADQ");
 				
 				if(table.equals("COCHE")) {
 					
-					Car coche =  new Car(v[0],v[1], v[2], v[3],cilindrada,
+					Car coche =  new Car(v[0],c[0],v[1], v[2], v[3],c[1], d,
 							v[4],v[5],rs.getInt("NUMPUERTAS"), rs.getInt("NUMPLAZAS"));
 					
 					vehiculos.add(coche);
 					
 				}else if(table.equals("FURGONETA")) {
 					
-					Van furgo =  new Van(v[0],v[1], v[2], v[3],cilindrada,
+					Van furgo =  new Van(v[0],c[0],v[1], v[2], v[3],c[1], d,
 							v[4],v[5], rs.getInt("MMA"));
 					
 					vehiculos.add(furgo);
 					
 				}else if(table.equals("CAMION")) {
 					
-					Truck camion =  new Truck(v[0],v[1], v[2], v[3],cilindrada,
+					Truck camion =  new Truck(v[0],c[0],v[1], v[2], v[3],c[1], d,
 							v[4],v[5], rs.getInt("MMA"), rs.getInt("NUMRUEDAS"));
 					
 					vehiculos.add(camion);
 					
 				}else if(table.equals("MICROBUS")) {
 					
-					Minibus minibus =  new Minibus(v[0],v[1], v[2], v[3],cilindrada,
+					Minibus minibus =  new Minibus(v[0],c[0],v[1], v[2], v[3],c[1], d,
 							v[4],v[5], rs.getInt("MEDIDA"),rs.getInt("NUMPLAZAS"));
 					
 					vehiculos.add(minibus);
@@ -544,6 +548,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 							"', cilindrada='" + v.getDisplacement() + "', estado='" + v.getStatus() + "', carnet='" + v.getDrivingLicense() + "' WHERE matricula='" +  v.getRegistration() + "'";
 			
 			String query2 = "";
+			
 			if(v instanceof Car) {
 				
 				Car o = (Car) v;
@@ -587,7 +592,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	}
 
 	@Override
-	public boolean deleteVehicles(Vehicle v) {
+	public boolean deleteVehicles(String  table, Vehicle v) {
 		
 		boolean eliminado = false;
 		
@@ -595,32 +600,15 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 
 		try (Connection con = ds.getConnection();
 				Statement stmt = con.createStatement();){
-	
+						
 			String query = "DELETE FROM VEHICULO WHERE MATRICULA= '" + v.getRegistration() + "'";
 			
+			String query2 =  "DELETE FROM " + table + " WHERE MATRICULA= '" + v.getRegistration() + "'";
+			
 			System.out.println(query);
+			System.out.println(query2);
 			
-			String query2 = "";
-			
-			if(v instanceof Car) {
-				
-				query2 = "DELETE FROM COCHE WHERE MATRICULA= '" + v.getRegistration() + "'";
-				
-			}else if( v instanceof Van) {
-				
-				query2 = "DELETE FROM FURGONETA WHERE MATRICULA= '" + v.getRegistration() + "'";
-				
-			}else if( v instanceof Truck) {
-				
-				query2 = "DELETE FROM CAMION WHERE MATRICULA= '" + v.getRegistration() + "'";
-
-			}else if (v instanceof Minibus) {
-				
-				query2 = "DELETE FROM MICROBUS WHERE MATRICULA= '" + v.getRegistration() + "'";
-
-			}
-			
-			if(stmt.executeUpdate(query)==1 && stmt.executeUpdate(query2)==1 )
+			if(stmt.executeUpdate(query2)==1 && stmt.executeUpdate(query)==1 )
 				eliminado=true;
 		
 		} catch (SQLException e) {
@@ -631,6 +619,88 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 				
 		return eliminado;
+	}
+
+	@Override
+	public boolean addVehicle(String table, ArrayList<String> l) {
+		// TODO Auto-generated method stub
+		boolean añadido = false;
+				
+		DataSource ds = MyDataSource.getOracleDataSource();
+
+		try (Connection con = ds.getConnection();
+				Statement stmt = con.createStatement();){
+			
+			String query = "insert INTO vehiculo (matricula, precioDia, marca, color, motor, cilindrada, fechaAdq, estado, carnet) values"
+					+ "('" + l.get(0) + "'," + Integer.parseInt(l.get(1)) + ", '" + l.get(2) + "','" + l.get(3) + "', ' " + l.get(4) + "'," + Integer.parseInt(l.get(5)) + ", "
+							+ "TO_DATE('"+  l.get(6) +"','yyyy/mm/dd') ,' "+ l.get(7) + "', '" + l.get(8) + "')";
+			
+			String query2 = "";
+			
+							
+				if(table.equals("FURGONETA")) 
+					
+					query2 = "insert INTO furgoneta (matricula, mma) values\r\n"
+							+ "('"+ l.get(0) + "', "+ Integer.parseInt(l.get(9)) + ")";
+				
+				else
+					query2 = "insert INTO " +  table + " values"
+							+ "('"+ l.get(0) + "', "+ Integer.parseInt(l.get(9)) + ", "+ Integer.parseInt(l.get(10)) + ")";
+					
+					
+				
+			System.out.println(query + " " + query2);
+			
+			if(stmt.executeUpdate(query)==1 && stmt.executeUpdate(query2)==1 )
+				añadido=true;
+		
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+
+			
+		}
+		
+		
+		return añadido;
+	}
+
+	@Override
+	public ArrayList<Invoice> getInvoice() {
+		// TODO Auto-generated method stub
+		
+		ArrayList<Invoice> facturas = new ArrayList<Invoice>();
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{?= call GESTIONALQUILER.listarfacturas()}";
+		ResultSet rs = null;
+		
+		try(Connection con = ds.getConnection();
+				CallableStatement cs = con.prepareCall(query)){
+			
+			cs.registerOutParameter(1, OracleTypes.CURSOR);
+			cs.execute();
+			rs = (ResultSet) cs.getObject(1);
+			
+			Invoice i = null;
+			
+			while (rs.next()) {
+				
+				i = new Invoice(rs.getInt("IDFACTURA"),rs.getInt("CLIENTEID"),rs.getDate("FECHA"),rs.getFloat("IMPORTEBASE"),rs.getFloat("IMPORTEIVA"));
+				facturas.add(i);
+				
+			}
+			
+			System.out.println(facturas.toString());
+			
+		}catch(Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		
+		return facturas;
 	}
 
 
