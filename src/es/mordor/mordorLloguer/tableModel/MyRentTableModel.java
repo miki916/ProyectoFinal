@@ -30,19 +30,17 @@ public class MyRentTableModel extends MyTableModel<Rent> {
 		switch(col) {
 		
 			case 0: return data.get(row).getMatricula();
-			case 1: for(Vehicle v : dataV) {
-					
-						for(Rent r : data) {
-							
-							if(v.getRegistration().equals(r.getMatricula())) {
-								
-								return dataV.get(row).getModel();
-								
-							}
-							
-						}
+			case 1: 
 				
-			}
+					for(Rent r : data) {			
+						for(Vehicle v : dataV) {
+							
+							if(v.getRegistration().equals(r.getMatricula())) 								
+								return v.getModel();						
+										
+						}
+					}
+					
 			case 2: return data.get(row).getPrecio();
 			case 3: return data.get(row).getfInicio();
 			case 4: return data.get(row).getfFin();

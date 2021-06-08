@@ -3,9 +3,10 @@ package es.mordor.mordorLloguer.controladores;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -122,53 +123,60 @@ public class VehiclesController implements ActionListener, TableModelListener {
 				protected Boolean doInBackground() throws Exception {
 					// TODO Auto-generated method stub
 					
+					String pattern = "yyyy-MM-dd";
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+					
 					 String registration = vistaJIFVehicle.getTextFieldRegistration().getText();
-					 String priceDay = vistaJIFVehicle.getSpinnerPrecio().getValue().toString();
+					 int priceDay = (int) vistaJIFVehicle.getSpinnerPrecio().getValue();
 					 String model = vistaJIFVehicle.getTextFieldModel().getText();
 					 String color = vistaJIFVehicle.getTextFieldColor().getText();
 					 String engine= vistaJIFVehicle.getComboBoxEngine().getSelectedItem().toString();
-					 String displacement= vistaJIFVehicle.getSpinnerDisplacement().getValue().toString();
-					 String shopDay = vistaJIFVehicle.getDate().toString();
+					 int displacement= (int) vistaJIFVehicle.getSpinnerDisplacement().getValue();
+					 Date shopDay=  new Date(simpleDateFormat.parse(vistaJIFVehicle.getDate().toString()).getTime());
 					 String status= vistaJIFVehicle.getComboBoxStatus().getSelectedItem().toString();
 					 String drivingLicense= vistaJIFVehicle.getComboBoxDrivingLicense().getSelectedItem().toString();
+					 int opcion1 = Integer.parseInt(vistaJIFVehicle.getTextFieldOpcion1().getText());
+					 int opcion2 = 0;
 					 
-					 ArrayList<String> v = new ArrayList<String>
-					 (Arrays.asList(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense));
+					 Vehicle v = null;
 					
-					int index = vista.getTabbedPane().getSelectedIndex();
-					boolean error = false;
+					 int index = vista.getTabbedPane().getSelectedIndex();
+					 boolean error = false;
 					
 					try {
 						
 						switch(index) {
 						
 							case 0:
+								
+								opcion2 = Integer.parseInt(vistaJIFVehicle.getTextFieldOpcion2().getText());
+
+								v = new Car(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);
 							
-								v.add(vistaJIFVehicle.getTextFieldOpcion1().getText());
-								v.add(vistaJIFVehicle.getTextFieldOpcion2().getText());
 								error = almacenDatos.addVehicle("COCHE", v);
 								
 								break;
 							
 							case 1: 
 								
-								v.add(vistaJIFVehicle.getTextFieldOpcion1().getText());
+								v = new Van(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1);
 								error = almacenDatos.addVehicle("FURGONETA", v);
 	
 								break;
 							
 							case 2:
 								
-								v.add(vistaJIFVehicle.getTextFieldOpcion1().getText());
-								v.add(vistaJIFVehicle.getTextFieldOpcion2().getText());
+								opcion2 = Integer.parseInt(vistaJIFVehicle.getTextFieldOpcion2().getText());
+
+								v = new Truck(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);
 								error = almacenDatos.addVehicle("CAMION", v);
 	
 								break;
 								
 							case 3:
-								
-								v.add(vistaJIFVehicle.getTextFieldOpcion1().getText());
-								v.add(vistaJIFVehicle.getTextFieldOpcion2().getText());
+								opcion2 = Integer.parseInt(vistaJIFVehicle.getTextFieldOpcion2().getText());
+
+								v = new Minibus(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);
 								error = almacenDatos.addVehicle("MICROBUS", v);
 	
 								break;
@@ -180,6 +188,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 						e.printStackTrace();
 						
 					}
+					
 					
 					if(error) {
 						
@@ -204,10 +213,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 			};
 
 			task.execute();					
-	
-		
-			
-		
+
 		
 	}
 

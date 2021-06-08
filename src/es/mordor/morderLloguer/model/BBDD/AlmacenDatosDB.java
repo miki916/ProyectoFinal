@@ -23,24 +23,15 @@ public interface AlmacenDatosDB {
 	public boolean addCustomer(String[] data);
 	public boolean updateCustomer(Customer cliente); 
 	
-	public ArrayList<Vehicle> getVehiclesOrderBy(String orderBy, String table);
-	public ArrayList<Vehicle>  getCarsOrderBy(String orderBy);
-	public ArrayList<Vehicle>  getVanOrderBy(String orderBy);
-	public ArrayList<Vehicle>  getTruckOrderBy(String orderBy);
-	public ArrayList<Vehicle>  getMiniBusOrderBy(String orderBy);
-	public boolean addVehicle(String table, ArrayList<String> l);
+	public ArrayList<Vehicle> getVehicles(String table);
+	public boolean addVehicle(String table, Vehicle v);
 	public boolean  updateVehicles(Vehicle v);
 	public boolean deleteVehicles(String  table, Vehicle v);
 	
 	public ArrayList<Invoice> getInvoice();
 
-
-
-
-	
 	public boolean authenticate (String login,String password);
 	public ArrayList<Rent> getRent();
-	public ArrayList<Vehicle> getVehicles(String table);
 	
 	
 	

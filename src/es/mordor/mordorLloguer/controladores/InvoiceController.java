@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import es.mordor.morderLloguer.model.BBDD.*;
@@ -35,29 +36,86 @@ public class InvoiceController implements ActionListener{
 		facturas = new ArrayList<Invoice>();
 		listV = new ArrayList<Vehicle>();
 		listC = new ArrayList<Customer>();
+		inicializar();
 	}
 
 	private void inicializar() {
 		// TODO Auto-generated method stub
+		
+		vista.getBtnPreviousInvoice().setEnabled(false);
+		
+		vista.getBtnNextInvoice().addActionListener(this);
+		vista.getBtnPreviousInvoice().addActionListener(this);
+
+		vista.getBtnNextInvoice().setActionCommand("Next");
+		vista.getBtnPreviousInvoice().setActionCommand("Previous");
 		
 	}
 	
 	public void go() {
 		
 		MainController.addJIF(vista);
-		update();
+		fillOracle();
 		
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+		String command = e.getActionCommand();
+		
+		if(command.equals("Next")) {
+			
+			nextInvoice();
+			
+		}else if(command.equals("Previous")) {
+			
+			prevInvoice();			
+		}
+		
+	}
 
+	private void prevInvoice() {
+		// TODO Auto-generated method stub
+		
+		index--;
+		mtm = new MyRentTableModel(getRent(facturas.get(index)), listV);						
+		vista.getTableDetalles().setModel(mtm);
+		fillValues();
+		btnEnabled();
+	
+	}
 
-	private void update() {
+	private void nextInvoice() {
+		// TODO Auto-generated method stub
+						
+		index++;
+		mtm = new MyRentTableModel(getRent(facturas.get(index)), listV);						
+		vista.getTableDetalles().setModel(mtm);	
+		fillValues();
+		btnEnabled();
+	}
+	
+	private void btnEnabled() {
+		
+		if(index == facturas.size()-1) 
+			vista.getBtnNextInvoice().setEnabled(false);
+		else
+			vista.getBtnNextInvoice().setEnabled(true);
+
+		if(index == 0) 
+			vista.getBtnPreviousInvoice().setEnabled(false);
+		else
+			vista.getBtnPreviousInvoice().setEnabled(true);
+		
+	}
+
+ 	private void fillOracle() {
 		// TODO Auto-generated method stub
 		
 		SwingWorker<Boolean,Void> task = new SwingWorker<Boolean,Void>(){
-			
-			
-			
+					
 			@Override
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
@@ -73,10 +131,9 @@ public class InvoiceController implements ActionListener{
 						listV.addAll(almacenDatos.getVehicles("CAMION"));
 						listV.addAll(almacenDatos.getVehicles("MICROBUS"));
 						listC = almacenDatos.getCustomer();
+						
 						fillValues();
-						mtm = new MyRentTableModel(getRent(facturas.get(index)), listV);
-						
-						
+						mtm = new MyRentTableModel(getRent(facturas.get(index)), listV);						
 						vista.getTableDetalles().setModel(mtm);
 						
 					}
@@ -91,57 +148,53 @@ public class InvoiceController implements ActionListener{
 				
 				return null;
 			}
-
-			private void fillValues() {
-				// TODO Auto-generated method stub
-				
-				for(Customer c : listC) {
-					
-					if(facturas.get(index).getClienteid() == c.getIdCliente()) {
-						
-						vista.getTxtFieldNombre().setText(c.getName());
-						vista.getTxtFieldApellidos().setText(c.getSurname());
-						vista.getTxtFieldDNI().setText(c.getDNI());
-						
-					}
-
-					
-				}
-				
-				
-				
-			}
-
-			private List<Rent> getRent(Invoice i) {
-				// TODO Auto-generated method stub
-				
-				ArrayList<Rent> alquilerFinal = new ArrayList<Rent>();
-					
-					for(Rent r : alquileres) {
-						
-
-						if(i.getIdfactura() == r.getIdFactura())
-							alquilerFinal.add(r);
-						
-					}				
-				
-				
-				return alquilerFinal;
-			}
 			
 		};
 		task.execute();
 		
 		
 	}
-
-
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
+	
+	
+	private List<Rent> getRent(Invoice i) {
 		// TODO Auto-generated method stub
 		
+		ArrayList<Rent> alquilerFinal = new ArrayList<Rent>();
+			
+			for(Rent r : alquileres) {
+		
+				if(i.getIdfactura() == r.getIdFactura())
+					alquilerFinal.add(r);
+			
+			}				
+				
+		return alquilerFinal;
 	}
+	
+	
+	private void fillValues() {
+		// TODO Auto-generated method stub
+		
+		vista.getTxtFieldNumeroFactura().setText(String.valueOf(facturas.get(index).getIdfactura()));
+		vista.getWebDateFieldFechaFactura().setDate(facturas.get(index).getFecha());
+		
+		for(Customer c : listC) {
+			
+			if(facturas.get(index).getClienteid() == c.getIdCliente()) {
+				
+				vista.getTxtFieldNombre().setText(c.getName());
+				vista.getTxtFieldApellidos().setText(c.getSurname());
+				vista.getTxtFieldDNI().setText(c.getDNI());
+							
+			}	
+		}		
+	}
+	
+	
+
+
+
+	
 
 	
 	
