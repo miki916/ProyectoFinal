@@ -242,7 +242,7 @@ public class CustomerController implements ActionListener, TableModelListener {
 					
 					if(!isCancelled()) {
 						
-						customers = almacenDatos.getCustomerOrderBy("APELLIDOS" + " ASC");
+						customers = almacenDatos.getCustomer();
 					}
 					
 				}catch(Exception e) {
@@ -334,9 +334,9 @@ public class CustomerController implements ActionListener, TableModelListener {
 				case 2: 
 					return data.get(row).getSurname();
 				case 3:
-					return data.get(row).getAddress();
-				case 4: 
 					return data.get(row).getCP();
+				case 4: 
+					return data.get(row).getAddress();
 				case 5: 
 					return data.get(row).getEmail();
 				case 6:

@@ -10,6 +10,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import es.mordor.morderLloguer.model.BBDD.*;
+import es.mordor.mordorLloguer.controladores.CustomerController.MyTableModelCustomer;
+import es.mordor.mordorLloguer.tableModel.MyVehicleTableModel;
 import es.mordor.mordorLloguer.vistas.*;
 
 
@@ -27,6 +29,8 @@ public class MainController implements ActionListener{
 	private CustomerController controladorClientes;
 	private VehiclesController controladorVehiculos;
 	private InvoiceController controladorFacturas;
+
+ 
 
 	
 	public MainController(JFMain vistaPrincipal, AlmacenDatosDB almacenDatos ) {
@@ -122,8 +126,9 @@ public class MainController implements ActionListener{
 		
 		if(!open(vistaFacturas)) {
 			
+				
 			vistaFacturas = new JIFInvoice();
-			controladorFacturas = new InvoiceController(vistaFacturas,almacenDatos);
+			controladorFacturas = new InvoiceController(almacenDatos,vistaFacturas);
 			controladorFacturas.go();
 			
 			

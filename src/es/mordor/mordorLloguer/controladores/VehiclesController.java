@@ -394,19 +394,19 @@ public class VehiclesController implements ActionListener, TableModelListener {
 					
 					if(!isCancelled()) {
 						
-						cars = (ArrayList<Car>) almacenDatos.getCarsOrderBy("MATRICULA").stream()
-																						.map((v)->(Car)v)
-																						.collect(Collectors.toList());
+						cars = (ArrayList<Car>) almacenDatos.getVehicles("COCHE").stream()
+																				   .map((v)->(Car)v)
+																				   .collect(Collectors.toList());
 										
-						vans = (ArrayList<Van>) almacenDatos.getVanOrderBy("MATRICULA").stream()
+						vans = (ArrayList<Van>) almacenDatos.getVehicles("FURGONETA").stream()
 																					   .map((v)->(Van)v)
 																					   .collect(Collectors.toList());
 						
-						trucks = (ArrayList<Truck>) almacenDatos.getTruckOrderBy("MATRICULA").stream()
+						trucks = (ArrayList<Truck>) almacenDatos.getVehicles("CAMION").stream()
 																							 .map((v)->(Truck)v)
 																							 .collect(Collectors.toList());
 						
-						miniBus = (ArrayList<Minibus>) almacenDatos.getMiniBusOrderBy("MATRICULA").stream()
+						miniBus = (ArrayList<Minibus>) almacenDatos.getVehicles("MICROBUS").stream()
 								 																  .map((v)->(Minibus)v)
 								 																  .collect(Collectors.toList());						
 					}

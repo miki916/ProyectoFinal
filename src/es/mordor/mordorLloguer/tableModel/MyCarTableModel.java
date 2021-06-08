@@ -15,6 +15,8 @@ public class MyCarTableModel extends MyVehicleTableModel<Car>{
 		super.HEADER.add("Puertas");
 	}
 	
+	
+	
 	@Override
 	public void setValueAt(Object value, int row, int col) {
 		// TODO Auto-generated method stub

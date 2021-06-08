@@ -7,11 +7,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.sql.DataSource;
 
 import oracle.jdbc.OracleTypes;
+import oracle.sql.DATE;
 
 
 
@@ -115,51 +117,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 
 		return empleados;
 	}
-	
-	public ArrayList<Customer> getCustomClient(String where){
 		
-		ArrayList<Customer> clientes = new ArrayList<Customer>();
-		
-		DataSource ds = MyDataSource.getOracleDataSource();
-		
-		String query = "SELECT * FROM CLIENTE";
-		
-		if(where != null)
-			
-			query += "WHERE " + where; 
-			
-		
-		try(Connection con = ds.getConnection();
-				Statement st = con.createStatement();
-				ResultSet rs = st.executeQuery(query)){
-			
-			Customer cliente;
-			
-			while(rs.next()) {
-				
-				cliente = new Customer(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),
-						rs.getString("apellidos"), rs.getString("CP"), rs.getString("domicilio"), rs.getString("email"), rs.getDate("fechaNac"),
-						rs.getString("carnet"));
-				
-						
-				clientes.add(cliente);
-				
-			}
-			
-			
-		}catch(SQLException e) {
-			
-			e.printStackTrace();
-			
-		}
-		
-		
-		return clientes;
-		
-	}
-	
-
-	
 	@Override
 	public boolean authenticate (String login,String password) {
 		
@@ -189,14 +147,12 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		return registrado;
 	}
-	
 		
 	@Override
 	public ArrayList<Employee> getEmployee() {
 		// TODO Auto-generated method stub
 		return getCustomEmpleados(null);
 	}
-
 	
 	@Override
 	public ArrayList<Employee> getEmployeeByCP(String cp) {
@@ -278,8 +234,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return eliminado;
 	}
 
-	
-
 	@Override
 	public ArrayList<Employee> getEmployeeOrderBy(String field, int sort) {
 		// TODO Auto-generated method stub
@@ -303,7 +257,42 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	@Override
 	public ArrayList<Customer> getCustomer() {
 		// TODO Auto-generated method stub
-		return getCustomClient(null);
+		ArrayList<Customer> clientes = new ArrayList<Customer>();
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{?= call GESTIONALQUILER.listarclientes()}";
+		ResultSet rs = null;
+		System.out.println(query);
+		try(Connection con = ds.getConnection();
+				CallableStatement cs = con.prepareCall(query)){
+			
+			cs.registerOutParameter(1, OracleTypes.CURSOR);
+			cs.execute();
+			rs = (ResultSet) cs.getObject(1);
+			
+			Customer cliente;
+			
+			while(rs.next()) {
+				
+				cliente = new Customer(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),
+						rs.getString("apellidos"), rs.getString("CP"), rs.getString("domicilio"), rs.getString("email"), rs.getDate("fechaNac"),
+						rs.getString("carnet"));
+				
+						
+				clientes.add(cliente);
+				
+			}
+			
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		
+		return clientes;
 	}
 
 	@Override
@@ -400,139 +389,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 	}
 
-
-	@Override
-	public ArrayList<Customer> getCustomerOrderBy(String orderBy) {
-		
-		ArrayList<Customer> clientes = new ArrayList<Customer>();
-
-		DataSource ds = MyDataSource.getOracleDataSource();
-
-		String query = "SELECT * FROM CLIENTE";
-
-		if (orderBy != null)
-			query += " ORDER BY " + orderBy;
-
-		try (Connection con = ds.getConnection();
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(query)) {
-
-			Customer cliente;
-
-			while (rs.next()) {
-				
-				cliente = new Customer(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),
-						rs.getString("apellidos"), rs.getString("CP"), rs.getString("domicilio"), rs.getString("email"), rs.getDate("fechaNac"),
-						rs.getString("carnet"));
-				
-						
-				clientes.add(cliente);
-				
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return clientes;
-	}
-
-	@Override
-	public ArrayList<Vehicle> getVehiclesOrderBy(String orderBy, String table) {
-		// TODO Auto-generated method stub
-		
-		ArrayList<Vehicle> vehiculos = new ArrayList<Vehicle>();
-
-		
-		DataSource ds = MyDataSource.getOracleDataSource();
-		
-		String sql = "SELECT * FROM VEHICULO, " + table + " WHERE VEHICULO.MATRICULA = " + table + ".MATRICULA";
-	
-	
-		if(orderBy != null)
-			sql += " ORDER BY " + "VEHICULO." + orderBy + " ASC";
-		
-		System.out.println(sql);
-		
-		try(Connection con = ds.getConnection();
-				Statement st = con.createStatement();
-				ResultSet rs = st.executeQuery(sql)){
-			
-			while(rs.next()) {
-			
-				String[] v = { rs.getString("MATRICULA"),  rs.getString("MARCA"), rs.getString("COLOR"),
-						rs.getString("MOTOR"), rs.getString("ESTADO"), rs.getString("CARNET")};
-				
-				int[] c = {rs.getInt("PRECIODIA"),rs.getInt("CILINDRADA")};
-				
-				Date d = rs.getDate("FECHAADQ");
-				
-				if(table.equals("COCHE")) {
-					
-					Car coche =  new Car(v[0],c[0],v[1], v[2], v[3],c[1], d,
-							v[4],v[5],rs.getInt("NUMPUERTAS"), rs.getInt("NUMPLAZAS"));
-					
-					vehiculos.add(coche);
-					
-				}else if(table.equals("FURGONETA")) {
-					
-					Van furgo =  new Van(v[0],c[0],v[1], v[2], v[3],c[1], d,
-							v[4],v[5], rs.getInt("MMA"));
-					
-					vehiculos.add(furgo);
-					
-				}else if(table.equals("CAMION")) {
-					
-					Truck camion =  new Truck(v[0],c[0],v[1], v[2], v[3],c[1], d,
-							v[4],v[5], rs.getInt("MMA"), rs.getInt("NUMRUEDAS"));
-					
-					vehiculos.add(camion);
-					
-				}else if(table.equals("MICROBUS")) {
-					
-					Minibus minibus =  new Minibus(v[0],c[0],v[1], v[2], v[3],c[1], d,
-							v[4],v[5], rs.getInt("MEDIDA"),rs.getInt("NUMPLAZAS"));
-					
-					vehiculos.add(minibus);
-					
-				}
-			}
-				
-			
-		}catch(SQLException e) {
-			
-			e.printStackTrace();
-		}
-		
-		
-		return vehiculos;
-	}
-	
-	
-	@Override
-	public ArrayList<Vehicle> getCarsOrderBy(String orderBy) {
-		// TODO Auto-generated method stub
-		return getVehiclesOrderBy(orderBy, "COCHE");
-	}
-
-	@Override
-	public ArrayList<Vehicle> getVanOrderBy(String orderBy) {
-		// TODO Auto-generated method stub
-		return getVehiclesOrderBy(orderBy, "FURGONETA");
-	}
-
-	@Override
-	public ArrayList<Vehicle>  getTruckOrderBy(String orderBy) {
-		// TODO Auto-generated method stub
-		return getVehiclesOrderBy(orderBy, "CAMION");
-	}
-
-	@Override
-	public ArrayList<Vehicle> getMiniBusOrderBy(String orderBy) {
-		// TODO Auto-generated method stub
-		return getVehiclesOrderBy(orderBy, "MICROBUS");
-	}
 
 	@Override
 	public boolean updateVehicles(Vehicle v) {
@@ -691,9 +547,8 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				
 			}
 			
-			System.out.println(facturas.toString());
 			
-		}catch(Exception e) {
+		}catch(SQLException e) {
 			
 			e.printStackTrace();
 			
@@ -702,6 +557,128 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		return facturas;
 	}
+	
+	public ArrayList<Rent> getRent(){
+		
+		ArrayList<Rent> alquileres = new ArrayList<Rent>();
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{?= call GESTIONALQUILER.listarAlquileres()}";
+		ResultSet rs = null;
+		
+		try(Connection con = ds.getConnection();
+				CallableStatement cs = con.prepareCall(query)){
+			
+			cs.registerOutParameter(1, OracleTypes.CURSOR);
+			cs.execute();
+			rs = (ResultSet) cs.getObject(1);
+			
+			Rent r = null;
+			
+			while (rs.next()) {
+				
+				r = new Rent(rs.getInt("IDALQUILER"),rs.getInt("IDFACTURA"),rs.getString("MATRICULA"),rs.getDate("FECHAINICIO"),rs.getDate("FECHAFIN"),rs.getFloat("PRECIO"));
+				alquileres.add(r);
+				
+			}
+			
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		
+		return alquileres;
+		
+		
+	}
 
+	@Override
+	public ArrayList<Vehicle> getVehicles(String table) {
+		// TODO Auto-generated method stub
+		ArrayList<Vehicle> vehiculos = new ArrayList<Vehicle>();
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{call GESTIONVEHICULOS.listarVehiculos(?,?)}";
+		ResultSet rs = null;
+		
+		try(Connection con = ds.getConnection();
+				CallableStatement cs = con.prepareCall(query)){
+			
+			cs.registerOutParameter(2, OracleTypes.CURSOR);
+			cs.setString(1, table);
+			cs.execute();
+			rs = (ResultSet) cs.getObject(2);
+			
+			Vehicle r = null;
+			
+			String pattern = "dd/MM/yy";
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+			
+			while (rs.next()) {
+				
+				 String registration = rs.getString("c1");
+				 int dayPrice = rs.getInt("n1");
+				 String model = rs.getString("c2");
+				 String color = rs.getString("c4");
+				 String engine = rs.getString("c5");
+				 int displacement = rs.getInt("n2");
+				 System.out.println(rs.getString("c6"));
+				 Date shopDay = new Date(simpleDateFormat.parse(rs.getString("c6")).getTime());
+				 String status = rs.getString("c7");
+				 String drivingLicense=rs.getString("c8");
+				 int value1 = rs.getInt("n3");
+				
+				if(table.equals("COCHE")) {
+					
+					int value2  = rs.getInt("n4");
+					
+					r = new Car(registration,dayPrice,model,color,engine,displacement,shopDay,status,drivingLicense,value1,value2);
+					
+					vehiculos.add(r);
+					
+				}else if(table.equals("FURGONETA")) {
+					
+					r = new Van(registration,dayPrice,model,color,engine,displacement,shopDay,status,drivingLicense,value1);
+							
+					vehiculos.add(r);
+					
+				}else if(table.equals("CAMION")) {
+					
+					int value2  = rs.getInt("n4");
+					
+					r = new Truck(registration,dayPrice,model,color,engine,displacement,shopDay,status,drivingLicense,value1,value2);
+									
+					vehiculos.add(r);
+					
+				}else if(table.equals("MICROBUS")) {
+					
+					int value2  = rs.getInt("n4");
+					
+					r = new Minibus(registration,dayPrice,model,color,engine,displacement,shopDay,status,drivingLicense,value1,value2);
+											
+					vehiculos.add(r);
+					
+				}
+				
+			
+				
+			}
+			
+			System.out.println(vehiculos.toString());
+			
+		}catch(Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		
+		
+		return vehiculos;
+	}
+	
 
 }

@@ -22,7 +22,6 @@ public interface AlmacenDatosDB {
 	public ArrayList<Customer> getCustomer();
 	public boolean addCustomer(String[] data);
 	public boolean updateCustomer(Customer cliente); 
-	public  ArrayList<Customer> getCustomerOrderBy(String orderBy);
 	
 	public ArrayList<Vehicle> getVehiclesOrderBy(String orderBy, String table);
 	public ArrayList<Vehicle>  getCarsOrderBy(String orderBy);
@@ -40,6 +39,8 @@ public interface AlmacenDatosDB {
 
 	
 	public boolean authenticate (String login,String password);
+	public ArrayList<Rent> getRent();
+	public ArrayList<Vehicle> getVehicles(String table);
 	
 	
 	

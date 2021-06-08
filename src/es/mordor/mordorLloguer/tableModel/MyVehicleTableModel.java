@@ -14,6 +14,12 @@ public abstract class MyVehicleTableModel<T extends Vehicle> extends MyTableMode
 		// TODO Auto-generated constructor stub
 	}
 	
+	public List<T> getData(){
+	
+		return data;
+	
+	}
+	
 	
 	public Class<?> getColumnClass(int colIndex) {
 		switch(colIndex) {

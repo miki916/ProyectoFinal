@@ -53,7 +53,7 @@ public class JFMain extends JFrame {
 		btnClientes.setIcon(new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/customers.png")));
 		menuBar.add(btnClientes);
 		
-		btnRent = new JButton("Alquilar");
+		btnRent = new JButton("Vehiculos");
 		Image image = (new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/rent.png")).getImage());
 		ImageIcon imageIconResized = new ImageIcon(getScaledImage(image,32));
 			btnRent.setIcon(imageIconResized);

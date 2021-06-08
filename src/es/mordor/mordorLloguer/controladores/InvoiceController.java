@@ -3,12 +3,15 @@ package es.mordor.mordorLloguer.controladores;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import es.mordor.morderLloguer.model.BBDD.AlmacenDatosDB;
-import es.mordor.morderLloguer.model.BBDD.Invoice;
-import es.mordor.mordorLloguer.tableModel.MyInvoiceTableModel;
+import es.mordor.morderLloguer.model.BBDD.*;
+import es.mordor.mordorLloguer.controladores.*;
+import es.mordor.mordorLloguer.controladores.CustomerController.MyTableModelCustomer;
+import es.mordor.mordorLloguer.tableModel.*;
+
 import es.mordor.mordorLloguer.vistas.JIFInvoice;
 
 public class InvoiceController implements ActionListener{
@@ -16,18 +19,24 @@ public class InvoiceController implements ActionListener{
 	
 	private AlmacenDatosDB almacenDatos;
 	private JIFInvoice vista;
-	private MyInvoiceTableModel mtm;
+	private MyRentTableModel mtm;
+	private ArrayList<Rent> alquileres;
+	private ArrayList<Invoice> facturas;
+	private ArrayList<Customer> listC;
+	private int index = 0;
+	private ArrayList<Vehicle> listV;
  
-	public InvoiceController(JIFInvoice vista, AlmacenDatosDB almacenDatos) {
 		
+	public InvoiceController(AlmacenDatosDB almacenDatos, JIFInvoice vista) {
+		super();
 		this.almacenDatos = almacenDatos;
 		this.vista = vista;
-		
-		inicializar();
+		alquileres = new ArrayList<Rent>();
+		facturas = new ArrayList<Invoice>();
+		listV = new ArrayList<Vehicle>();
+		listC = new ArrayList<Customer>();
 	}
-	
-	
-	
+
 	private void inicializar() {
 		// TODO Auto-generated method stub
 		
@@ -46,19 +55,28 @@ public class InvoiceController implements ActionListener{
 		// TODO Auto-generated method stub
 		
 		SwingWorker<Boolean,Void> task = new SwingWorker<Boolean,Void>(){
-
+			
+			
+			
 			@Override
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
-				
-				ArrayList<Invoice> facturas = new ArrayList<Invoice>();
 				
 				try {
 					
 					if(!isCancelled()) {
 						
+						alquileres = almacenDatos.getRent();
 						facturas = almacenDatos.getInvoice();
-						mtm = new MyInvoiceTableModel(facturas);
+						listV.addAll(almacenDatos.getVehicles("COCHE"));
+						listV.addAll(almacenDatos.getVehicles("FURGONETA"));
+						listV.addAll(almacenDatos.getVehicles("CAMION"));
+						listV.addAll(almacenDatos.getVehicles("MICROBUS"));
+						listC = almacenDatos.getCustomer();
+						fillValues();
+						mtm = new MyRentTableModel(getRent(facturas.get(index)), listV);
+						
+						
 						vista.getTableDetalles().setModel(mtm);
 						
 					}
@@ -72,6 +90,43 @@ public class InvoiceController implements ActionListener{
 				
 				
 				return null;
+			}
+
+			private void fillValues() {
+				// TODO Auto-generated method stub
+				
+				for(Customer c : listC) {
+					
+					if(facturas.get(index).getClienteid() == c.getIdCliente()) {
+						
+						vista.getTxtFieldNombre().setText(c.getName());
+						vista.getTxtFieldApellidos().setText(c.getSurname());
+						vista.getTxtFieldDNI().setText(c.getDNI());
+						
+					}
+
+					
+				}
+				
+				
+				
+			}
+
+			private List<Rent> getRent(Invoice i) {
+				// TODO Auto-generated method stub
+				
+				ArrayList<Rent> alquilerFinal = new ArrayList<Rent>();
+					
+					for(Rent r : alquileres) {
+						
+
+						if(i.getIdfactura() == r.getIdFactura())
+							alquilerFinal.add(r);
+						
+					}				
+				
+				
+				return alquilerFinal;
 			}
 			
 		};
