@@ -1,6 +1,6 @@
 package es.mordor.morderLloguer.model.BBDD;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Minibus extends Vehicle{
 
@@ -8,7 +8,7 @@ public class Minibus extends Vehicle{
 	private int seating;
 	
 	
-	public Minibus(String registration, int dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
+	public Minibus(String registration, float dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
 			String drivingLicense, int width, int seating) {
 		
 		super(registration,dayPrice, model, color, engine, displacement,shopDay, status, drivingLicense);

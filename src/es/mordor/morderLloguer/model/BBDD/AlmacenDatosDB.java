@@ -10,8 +10,6 @@ public interface AlmacenDatosDB {
 	public static final int DESCENDING = 2;
 	
 	public ArrayList<Employee> getEmployee();
-	public ArrayList<Employee> getEmployeeByCP(String cp);
-	public ArrayList<Employee> getEmployeeByCargo(String cargo);
 	public Employee getEmployeeByDNI(String dni);
 	public boolean addEmployee(String[] data);
 	public boolean updateEmployee(Employee empleado); 

@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import javax.sql.DataSource;
 
 import oracle.jdbc.OracleTypes;
-import oracle.sql.DATE;
-import es.mordor.morderLloguer.model.BBDD.*;
 
 
 
@@ -166,17 +164,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return getCustomEmpleados(null);
 	}
 	
-	@Override
-	public ArrayList<Employee> getEmployeeByCP(String cp) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ArrayList<Employee> getEmployeeByCargo(String cargo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Employee getEmployeeByDNI(String dni) {
@@ -408,53 +395,18 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		boolean actualizado = false;
 		
-		DataSource ds = MyDataSource.getOracleDataSource();
-
-		try (Connection con = ds.getConnection();
-				Statement stmt = con.createStatement();){
+		if(v instanceof Car)					
+			actualizado = callCar("actualizarCoche",(Car) v);
+					
+		else if(v instanceof Van) 					
+			actualizado = callVan("actualizarFurgo",(Van) v);
 			
-			String query = "UPDATE VEHICULO SET  marca='" + v.getModel() + "', color='" + v.getColor() + "', motor='" + v.getEngine() + 
-							"', cilindrada='" + v.getDisplacement() + "', estado='" + v.getStatus() + "', carnet='" + v.getDrivingLicense() + "' WHERE matricula='" +  v.getRegistration() + "'";
-			
-			String query2 = "";
-			
-			if(v instanceof Car) {
-				
-				Car o = (Car) v;
-				
-				query2 = "UPDATE COCHE SET  numplazas='" + o.getSeating() + "', numpuertas='" + o.getDoors() + "' WHERE matricula='" +  v.getRegistration() + "'";
-				
-			}else if(v instanceof Van) {
-				
-				Van o = (Van) v;
-				query2 = "UPDATE FURGONETA SET  mma='" + o.getMMA() + "' WHERE matricula='" +  v.getRegistration() + "'";
-
-				
-			}else if(v instanceof Truck) {
-				
-				Truck o = (Truck) v;
-				query2 = "UPDATE CAMION SET  mma='" + o.getMMA() + "', numruedas='" + o.getnWheels() + "' WHERE matricula='" +  v.getRegistration() + "'";
-
-				
-			}else if(v instanceof Minibus) {
-				
-				Minibus o = (Minibus) v;
-				query2 = "UPDATE MICROBUS SET numplazas='" + o.getSeating() + "', medida='" + o.getMedida()  + "' WHERE matricula='" +  v.getRegistration() + "'";
-
-				
-			}
-			
-			
-			System.out.println(query);
-			
-			if(stmt.executeUpdate(query)==1 && stmt.executeUpdate(query2) == 1)
-				actualizado=true;
+		else if(v instanceof Truck)
+			actualizado = callTruck("actualizarCamion",(Truck) v);
+								
+		else if(v instanceof Minibus)
+			actualizado = callMinibus("actualizarMicrobus",(Minibus) v);
 		
-		} catch (SQLException e) {
-			
-			e.printStackTrace();
-
-		}
 		
 				
 		return actualizado;
@@ -463,31 +415,39 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	@Override
 	public boolean deleteVehicles(String  table, Vehicle v) {
 		
-		boolean eliminado = false;
+		boolean delete = false;
 		
 		DataSource ds = MyDataSource.getOracleDataSource();
-
-		try (Connection con = ds.getConnection();
-				Statement stmt = con.createStatement();){
-						
-			String query = "DELETE FROM VEHICULO WHERE MATRICULA= '" + v.getRegistration() + "'";
-			
-			String query2 =  "DELETE FROM " + table + " WHERE MATRICULA= '" + v.getRegistration() + "'";
-			
-			System.out.println(query);
-			System.out.println(query2);
-			
-			if(stmt.executeUpdate(query2)==1 && stmt.executeUpdate(query)==1 )
-				eliminado=true;
 		
-		} catch (SQLException e) {
+		String query = "{ call GESTIONVEHICULOS.";
+		
+		if(v instanceof Car) 
+			query+= "borrarCoche('" + v.getRegistration() + "')}";
+			
+		else if(v instanceof Van) 
+			query += "borrarFurgo('" + v.getRegistration() + "')}";
+			
+		else if(v instanceof Truck) 			
+			query += "borrarCamion('" + v.getRegistration() + "')}";
+			
+		else if(v instanceof Minibus)
+			query += "borrarMicrobus('" + v.getRegistration() + "')}";
+
+		
+		
+		try (Connection con = ds.getConnection();
+				CallableStatement cstmt = con.prepareCall(query);) {
+			
+			
+			delete = (cstmt.executeUpdate() == 1) ? true : false;
+			
+		}catch(SQLException e) {
 			
 			e.printStackTrace();
-
+			
 		}
 		
-				
-		return eliminado;
+		return delete;
 	}
 
 	@Override
@@ -496,29 +456,30 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		boolean añadido = false;
 					
 			if(v instanceof Car)					
-				añadido = getCars((Car) v);
+				añadido = callCar("insertarCoche",(Car) v);
 						
 			else if(v instanceof Van) 					
-				añadido = getVan((Van) v);
+				añadido = callVan("insertarFurgo",(Van) v);
 				
 			else if(v instanceof Truck)
-				añadido = getTruck((Truck) v);
+				añadido = callTruck("insertarCamion",(Truck) v);
 									
 			else if(v instanceof Minibus)
-				añadido = getMicrobus((Minibus) v);
+				añadido = callMinibus("insertarMicrobus",(Minibus) v);
 				
 		
 		
 		return añadido;
 	}
 	
-	private boolean getMicrobus(Minibus m) {
+	private boolean callMinibus(String call, Minibus m) {
 		
 		boolean added = false;
 		
 		DataSource ds = MyDataSource.getOracleDataSource();
 		
-		String query = "{ call GESTIONVEHICULOS.insertarMicrobus(?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String query = "{ call GESTIONVEHICULOS." + call + "(?,?,?,?,?,?,?,?,?,?,?,?)}";
+		
 		
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
@@ -526,17 +487,18 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 			int pos = 0;
 			
 			cstmt.setString(++pos, m.getRegistration());
-			cstmt.setInt(++pos, m.getDayPrice());
+			cstmt.setFloat(++pos, m.getDayPrice());
 			cstmt.setString(++pos, m.getModel());
 			cstmt.setString(++pos, "");
 			cstmt.setString(++pos,  m.getColor());
 			cstmt.setString(++pos,  m.getEngine());
-			cstmt.setInt(++pos, m.getDisplacement());
-			cstmt.setDate(++pos, (Date) m.getShopDay());
+			cstmt.setDate(++pos,  m.getShopDay());
 			cstmt.setString(++pos, m.getStatus());
 			cstmt.setString(++pos, m.getDrivingLicense());
 			cstmt.setInt(++pos, m.getSeating());
 			cstmt.setInt(++pos,m.getMedida());
+			cstmt.setInt(++pos, m.getDisplacement());
+
 		
 			
 			added = (cstmt.executeUpdate() == 1) ? true : false;
@@ -550,33 +512,36 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return added;
 	}
 
-	private boolean getTruck(Truck t) {
+	private boolean callTruck(String call, Truck t) {
 		// TODO Auto-generated method stub
 		
 		boolean added = false;
 		
 		DataSource ds = MyDataSource.getOracleDataSource();
 		
-		String query = "{ call GESTIONVEHICULOS.insertarCamion(?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String query = "{ call GESTIONVEHICULOS." + call + "(?,?,?,?,?,?,?,?,?,?,?,?)}";
 		
+		System.out.println(query);
+		
+				
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
 			
 			int pos = 0;
 			
 			cstmt.setString(++pos, t.getRegistration());
-			cstmt.setInt(++pos, t.getDayPrice());
+			cstmt.setFloat(++pos, t.getDayPrice());
 			cstmt.setString(++pos, t.getModel());
 			cstmt.setString(++pos, "");
 			cstmt.setString(++pos,  t.getColor());
 			cstmt.setString(++pos,  t.getEngine());
-			cstmt.setInt(++pos, t.getDisplacement());
-			cstmt.setDate(++pos, (Date) t.getShopDay());
+			cstmt.setDate(++pos,  t.getShopDay());
 			cstmt.setString(++pos, t.getStatus());
 			cstmt.setString(++pos, t.getDrivingLicense());
 			cstmt.setInt(++pos,t.getnWheels());
 			cstmt.setInt(++pos,t.getMMA());
-		
+			cstmt.setInt(++pos, t.getDisplacement());
+
 			
 			added = (cstmt.executeUpdate() == 1) ? true : false;
 			
@@ -591,13 +556,13 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 	}
 
-	private boolean getVan(Van v) {
+	private boolean callVan(String call, Van v) {
 		
 		boolean added = false;
 		
 		DataSource ds = MyDataSource.getOracleDataSource();
 		
-		String query = "{ call GESTIONVEHICULOS.insertarFurgo(?,?,?,?,?,?,?,?,?,?,?)}";
+		String query = "{ call GESTIONVEHICULOS." + call + "(?,?,?,?,?,?,?,?,?,?,?)}";
 		
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
@@ -605,16 +570,18 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 			int pos = 0;
 			
 			cstmt.setString(++pos, v.getRegistration());
-			cstmt.setInt(++pos, v.getDayPrice());
+			cstmt.setFloat(++pos, v.getDayPrice());
 			cstmt.setString(++pos, v.getModel());
 			cstmt.setString(++pos, "");
 			cstmt.setString(++pos,  v.getColor());
 			cstmt.setString(++pos,  v.getEngine());
-			cstmt.setInt(++pos, v.getDisplacement());
-			cstmt.setDate(++pos, (Date) v.getShopDay());
+			cstmt.setDate(++pos,  v.getShopDay());
 			cstmt.setString(++pos, v.getStatus());
 			cstmt.setString(++pos, v.getDrivingLicense());
 			cstmt.setInt(++pos,v.getMMA());
+			System.out.println(v.getMMA());
+			cstmt.setInt(++pos, v.getDisplacement());
+
 		
 			
 			added = (cstmt.executeUpdate() == 1) ? true : false;
@@ -630,32 +597,35 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 	}
 
-	private boolean getCars(Car c) {
+	private boolean callCar(String call, Car c) {
 		// TODO Auto-generated method stub
 				
 		boolean added = false;
 		
 		DataSource ds = MyDataSource.getOracleDataSource();
 		
-		String query = "{ call GESTIONVEHICULOS.insertarCoche(?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String query = "{ call GESTIONVEHICULOS." + call + "(?,?,?,?,?,?,?,?,?,?,?,?)}";
+		
+		System.out.println(c);
 		
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
 			
 			int pos = 0;
-			
+		
 			cstmt.setString(++pos, c.getRegistration());
-			cstmt.setInt(++pos, c.getDayPrice());
+			cstmt.setFloat(++pos, c.getDayPrice());
 			cstmt.setString(++pos, c.getModel());
 			cstmt.setString(++pos, "");
 			cstmt.setString(++pos,  c.getColor());
 			cstmt.setString(++pos,  c.getEngine());
-			cstmt.setInt(++pos, c.getDisplacement());
-			cstmt.setDate(++pos, (Date) c.getShopDay());
+			cstmt.setDate(++pos, c.getShopDay());
 			cstmt.setString(++pos, c.getStatus());
 			cstmt.setString(++pos, c.getDrivingLicense());
 			cstmt.setInt(++pos,c.getSeating());
 			cstmt.setInt(++pos,c.getDoors());
+			cstmt.setInt(++pos, c.getDisplacement());
+
 			
 			added = (cstmt.executeUpdate() == 1) ? true : false;
 			
@@ -680,7 +650,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		String query = "{?= call GESTIONALQUILER.listarfacturas()}";
 		ResultSet rs = null;
 		
-		System.out.println("Invoice");
+		System.out.println(query);
 		
 		try(Connection con = ds.getConnection();
 				CallableStatement cs = con.prepareCall(query)){
@@ -718,7 +688,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		String query = "{?= call GESTIONALQUILER.listarAlquileres()}";
 		ResultSet rs = null;
-		System.out.println("Rent");
+		System.out.println(query);
 
 		try(Connection con = ds.getConnection();
 				CallableStatement cs = con.prepareCall(query)){
@@ -736,7 +706,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				
 			}
 			
-			System.out.println(alquileres.toString());
 
 			
 		}catch(SQLException e) {
@@ -759,6 +728,8 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		String query = "{call GESTIONVEHICULOS.listarVehiculos(?,?)}";
 		ResultSet rs = null;
+		
+		System.out.println(query);
 		
 		try(Connection con = ds.getConnection();
 				CallableStatement cs = con.prepareCall(query)){
@@ -787,6 +758,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				 String drivingLicense=rs.getString("c8");
 				 int value1 = rs.getInt("n3");
 				
+				 
 				if(table.equals("COCHE")) {
 					
 					int value2  = rs.getInt("n4");
@@ -804,7 +776,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				}else if(table.equals("CAMION")) {
 					
 					int value2  = rs.getInt("n4");
-					
+										
 					r = new Truck(registration,dayPrice,model,color,engine,displacement,shopDay,status,drivingLicense,value1,value2);
 									
 					vehiculos.add(r);
@@ -817,13 +789,9 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 											
 					vehiculos.add(r);
 					
-				}
-				
-			
-				
+				}				
 			}
 			
-			System.out.println(vehiculos.toString());
 			
 		}catch(Exception e) {
 			

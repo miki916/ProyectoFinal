@@ -3,10 +3,10 @@ package es.mordor.mordorLloguer.controladores;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,8 +109,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 		else if(command.equals("Add"))			
 		
 			addNewVehicle();
-		
-			
+
 
 	}
 	
@@ -132,7 +131,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 					 String color = vistaJIFVehicle.getTextFieldColor().getText();
 					 String engine= vistaJIFVehicle.getComboBoxEngine().getSelectedItem().toString();
 					 int displacement= (int) vistaJIFVehicle.getSpinnerDisplacement().getValue();
-					 Date shopDay=  new Date(simpleDateFormat.parse(vistaJIFVehicle.getDate().toString()).getTime());
+					 Date shopDay=  new java.sql.Date(simpleDateFormat.parse(vistaJIFVehicle.getDate().toString()).getTime());
 					 String status= vistaJIFVehicle.getComboBoxStatus().getSelectedItem().toString();
 					 String drivingLicense= vistaJIFVehicle.getComboBoxDrivingLicense().getSelectedItem().toString();
 					 int opcion1 = Integer.parseInt(vistaJIFVehicle.getTextFieldOpcion1().getText());
@@ -150,34 +149,35 @@ public class VehiclesController implements ActionListener, TableModelListener {
 							case 0:
 								
 								opcion2 = Integer.parseInt(vistaJIFVehicle.getTextFieldOpcion2().getText());
-
-								v = new Car(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);
-							
+								v = (Car) new Car(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);
 								error = almacenDatos.addVehicle("COCHE", v);
-								
+								updateTable(error,mtmCar,v);
+
 								break;
 							
 							case 1: 
 								
-								v = new Van(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1);
+								v = (Van) new Van(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1);
 								error = almacenDatos.addVehicle("FURGONETA", v);
-	
+								updateTable(error,mtmVan,v);
+
 								break;
 							
 							case 2:
 								
 								opcion2 = Integer.parseInt(vistaJIFVehicle.getTextFieldOpcion2().getText());
-
-								v = new Truck(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);
+								v = (Truck) new Truck(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);
 								error = almacenDatos.addVehicle("CAMION", v);
-	
+								updateTable(error,mtmTruck,v);
+
 								break;
 								
 							case 3:
+								
 								opcion2 = Integer.parseInt(vistaJIFVehicle.getTextFieldOpcion2().getText());
-
-								v = new Minibus(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);
+								v = (Minibus) new Minibus(registration,priceDay,model,color,engine,displacement,shopDay,status,drivingLicense,opcion1,opcion2);	
 								error = almacenDatos.addVehicle("MICROBUS", v);
+								updateTable(error,mtmMiniBus,v);
 	
 								break;
 						}
@@ -189,27 +189,23 @@ public class VehiclesController implements ActionListener, TableModelListener {
 						
 					}
 					
+					return null;
+				}
+
+				private void updateTable(boolean error, MyVehicleTableModel mtm, Vehicle v) {
+					// TODO Auto-generated method stub
 					
 					if(error) {
 						
-						update();
+						mtm.addElementAtRow(v);
 						JOptionPane.showMessageDialog(vista, "Empleado añadido correctamente", "Succes", JOptionPane.INFORMATION_MESSAGE);
-						vistaJIFVehicle.dispose();			
-					}else {
+						vistaJIFVehicle.dispose();	
 						
+					}else 						
 						JOptionPane.showMessageDialog(vista, "Error al añadir al empleado", "Error", JOptionPane.INFORMATION_MESSAGE);
 
-						
-					}
-					
-			
-					
-					return null;
-				}
-				
-				
-				
-				
+
+				}			
 			};
 
 			task.execute();					
@@ -309,7 +305,6 @@ public class VehiclesController implements ActionListener, TableModelListener {
 	}
 	
 	
-
 	private ArrayList<Vehicle> arrayListF(ArrayList<Vehicle> vehicle, JPVehicles JPv) {
 		
 		ArrayList<Vehicle> result;
@@ -323,9 +318,8 @@ public class VehiclesController implements ActionListener, TableModelListener {
 		.collect(Collectors.toList());
 		return result;
 	}
+				
 	
-	
-			
 	private void removeRow() {
 		// TODO Auto-generated method stub
 		
@@ -384,8 +378,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 		}
 				
 	}
-	
-
+		
 	
 	private void update() {
 		// TODO Auto-generated method stub
@@ -441,33 +434,34 @@ public class VehiclesController implements ActionListener, TableModelListener {
 							}
 							
 						}
-											
+						
+						ArrayList<Vehicle> vehicles;
+						
 						mtmCar=new MyCarTableModel(cars);
 						vista.getPanelCar().getTable().setModel(mtmCar);
 						mtmCar.addTableModelListener(controller);
-						comboBox( cars.get(0), vista.getPanelCar());
-						
+						vehicles = (ArrayList<Vehicle>) cars.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
+						setComboBoxes(vehicles, vista.getPanelCar());
 												
 						mtmVan = new MyVanTableModel(vans);
 						vista.getPanelVan().getTable().setModel(mtmVan);
 						mtmVan.addTableModelListener(controller);
-						comboBox( vans.get(0), vista.getPanelVan());
+						vehicles = (ArrayList<Vehicle>) vans.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
+						setComboBoxes(vehicles, vista.getPanelVan());
 
 														
 						mtmTruck = new MyTruckTableModel(trucks);
 						vista.getPanelTruck().getTable().setModel(mtmTruck);
 						mtmTruck.addTableModelListener(controller);
-						comboBox( trucks.get(0), vista.getPanelTruck());
-				
+						vehicles = (ArrayList<Vehicle>) trucks.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
+						setComboBoxes(vehicles, vista.getPanelTruck());				
 						
 						mtmMiniBus = new MyMinibusTableModel(miniBus);
 						vista.getPanelMiniBus().getTable().setModel(mtmMiniBus);
 						mtmMiniBus.addTableModelListener(controller);
-						comboBox( miniBus.get(0), vista.getPanelMiniBus());
-						
-						
-
-															
+						vehicles = (ArrayList<Vehicle>) miniBus.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
+						setComboBoxes(vehicles, vista.getPanelMiniBus());
+																					
 						
 					}catch(Exception e) {
 						 
@@ -484,70 +478,29 @@ public class VehiclesController implements ActionListener, TableModelListener {
 					
 			}
 
-			private void comboBox( Object o,  JPVehicles JPv ) {
-				// TODO Auto-generated method stub
-				
-				ArrayList<Vehicle> p = new ArrayList<Vehicle>();
-				
-				if( o instanceof Car) 
-					
-					p = (ArrayList<Vehicle>) cars.stream()
-							.map((v)->(Vehicle)v)
-							.collect(Collectors.toList());
-				
-				else if ( o instanceof Van) 
-					
-					p = (ArrayList<Vehicle>) vans.stream()
-							.map((v)->(Vehicle)v)
-							.collect(Collectors.toList());
-					
-				else if ( o instanceof Truck) 
-					
-					p = (ArrayList<Vehicle>) trucks.stream()
-							.map((v)->(Vehicle)v)
-							.collect(Collectors.toList());
-					
-				else 
-					
-					p = (ArrayList<Vehicle>) miniBus.stream()
-							.map((v)->(Vehicle)v)
-							.collect(Collectors.toList());
-					
-				
-				ArrayList<String> l = new ArrayList<String>();
-				ArrayList<String> e = new ArrayList<String>();
-			
-				for(Vehicle v : p) {
-					
-					String license = v.getDrivingLicense();
-					String engine =  v.getEngine();
-					
-					if(!l.contains(license)) {
-						
-						l.add(license);
-						JPv.getComboBoxDrivingLicense().addItem(license);
-						
-					}
-					
-					if (!e.contains(engine)) {
-						
-						e.add(engine);
-						JPv.getComboBoxEngine().addItem(engine);
+			private void setComboBoxes(ArrayList<Vehicle> v, JPVehicles vFrame) {
 
-						
-					}	
+				List<String> c_engine = v.stream().map((p) -> p.getEngine()).distinct().collect(Collectors.toList());
+				List<String> c_license = v.stream().map((p) -> p.getDrivingLicense()).distinct().collect(Collectors.toList());
+
+				for (String a : c_engine) {
+					vFrame.getComboBoxEngine().addItem(a);
 				}
+				
+				for (String a : c_license) {
+					vFrame.getComboBoxDrivingLicense().addItem(a);
+				}
+
+				
 			}
 		};
 		
 		task.execute();
 		
 	}
-
-	
+		
 	
 	@Override
-	
 	public void tableChanged(TableModelEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getType() == TableModelEvent.UPDATE) {

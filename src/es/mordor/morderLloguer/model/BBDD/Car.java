@@ -1,13 +1,13 @@
 package es.mordor.morderLloguer.model.BBDD;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Car extends Vehicle {
 	
 	private int seating;
 	private int doors;
 	
-	public Car(String registration, int dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
+	public Car(String registration, float dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
 			String drivingLicense, int seating, int doors) {
 		
 		super(registration,dayPrice, model, color, engine, displacement,shopDay, status, drivingLicense);
@@ -34,7 +34,16 @@ public class Car extends Vehicle {
 	public void setDoors(int doors) {
 		this.doors = doors;
 	}
+
+
+	@Override
+	public String toString() {
+		return "Car [seating=" + seating + ", doors=" + doors + ", getDayPrice()=" + getDayPrice() + ", getShopDay()="
+				+ getShopDay() + ", getRegistration()=" + getRegistration() + ", getModel()=" + getModel()
+				+ ", getColor()=" + getColor() + ", getEngine()=" + getEngine() + ", getDisplacement()="
+				+ getDisplacement() + ", getStatus()=" + getStatus() + ", getDrivingLicense()=" + getDrivingLicense()
+				+ "]";
+	}
 	
 		
-	
 }

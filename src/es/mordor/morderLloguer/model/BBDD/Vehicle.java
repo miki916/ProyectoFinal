@@ -1,11 +1,11 @@
 package es.mordor.morderLloguer.model.BBDD;
 
-import java.util.Date;
+import java.sql.Date;
 
 public abstract class Vehicle {
 	
 	private String registration;
-	private int dayPrice;
+	private float dayPrice;
 	private String model;
 	private String color;
 	private String engine;
@@ -15,7 +15,7 @@ public abstract class Vehicle {
 	private String drivingLicense;
 	
 	
-	public Vehicle(String registration, int dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
+	public Vehicle(String registration, float dayPrice, String model, String color, String engine, int displacement, Date shopDay,  String status,
 			String drivingLicense) {
 		super();
 		this.registration = registration;
@@ -31,13 +31,13 @@ public abstract class Vehicle {
 	
 	
 
-	public int getDayPrice() {
+	public float getDayPrice() {
 		return dayPrice;
 	}
 
 
 
-	public void setDayPrice(int dayPrice) {
+	public void setDayPrice(float dayPrice) {
 		this.dayPrice = dayPrice;
 	}
 
