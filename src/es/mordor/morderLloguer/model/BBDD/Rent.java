@@ -1,6 +1,6 @@
 package es.mordor.morderLloguer.model.BBDD;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Rent {
 
@@ -19,6 +19,17 @@ public class Rent {
 		this.fInicio = fInicio;
 		this.fFin = fFin;
 		this.precio = precio;
+	}
+	
+	public  Rent(int idAlquiler, String matricula, Date fInicio, Date fFin) {
+		
+	
+		this.idAlquiler = idAlquiler;
+		this.matricula = matricula;
+		this.fInicio = fInicio;
+		this.fFin = fFin;
+		precio = 0;
+		
 	}
 
 	public int getIdAlquiler() {

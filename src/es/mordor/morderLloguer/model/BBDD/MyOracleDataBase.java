@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -262,7 +264,9 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		String query = "{?= call GESTIONALQUILER.listarclientes()}";
 		ResultSet rs = null;
+		
 		System.out.println(query);
+		
 		try(Connection con = ds.getConnection();
 				CallableStatement cs = con.prepareCall(query)){
 			
@@ -274,16 +278,14 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 			
 			while(rs.next()) {
 				
-				cliente = new Customer(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),
-						rs.getString("apellidos"), rs.getString("CP"), rs.getString("domicilio"), rs.getString("email"), rs.getDate("fechaNac"),
-						rs.getString("carnet"));
+				cliente = new Customer(rs.getInt("idCliente"), rs.getString("DNI"), rs.getString("nombre"),rs.getString("apellidos"),
+						rs.getString("CP"), rs.getString("domicilio"), rs.getString("email"), rs.getDate("fechaNac"),rs.getString("carnet"));
 				
 						
 				clientes.add(cliente);
 				
 			}
 			
-			System.out.println(clientes.toString());
 			
 		}catch(SQLException e) {
 			
@@ -433,7 +435,8 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		else if(v instanceof Minibus)
 			query += "borrarMicrobus('" + v.getRegistration() + "')}";
 
-		
+		System.out.println(query);
+
 		
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
@@ -480,6 +483,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		String query = "{ call GESTIONVEHICULOS." + call + "(?,?,?,?,?,?,?,?,?,?,?,?)}";
 		
+		System.out.println(query);
 		
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
@@ -523,7 +527,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		System.out.println(query);
 		
-				
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
 			
@@ -563,6 +566,8 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		DataSource ds = MyDataSource.getOracleDataSource();
 		
 		String query = "{ call GESTIONVEHICULOS." + call + "(?,?,?,?,?,?,?,?,?,?,?)}";
+		
+		System.out.println(query);
 		
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
@@ -606,7 +611,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		String query = "{ call GESTIONVEHICULOS." + call + "(?,?,?,?,?,?,?,?,?,?,?,?)}";
 		
-		System.out.println(c);
+		System.out.println(query);
 		
 		try (Connection con = ds.getConnection();
 				CallableStatement cstmt = con.prepareCall(query);) {
@@ -651,7 +656,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		ResultSet rs = null;
 		
 		System.out.println(query);
-		
+
 		try(Connection con = ds.getConnection();
 				CallableStatement cs = con.prepareCall(query)){
 			
@@ -668,8 +673,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				
 			}
 			
-			System.out.println(facturas.toString());
-
 			
 		}catch(SQLException e) {
 			
@@ -688,6 +691,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		String query = "{?= call GESTIONALQUILER.listarAlquileres()}";
 		ResultSet rs = null;
+
 		System.out.println(query);
 
 		try(Connection con = ds.getConnection();
@@ -730,7 +734,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		ResultSet rs = null;
 		
 		System.out.println(query);
-		
+
 		try(Connection con = ds.getConnection();
 				CallableStatement cs = con.prepareCall(query)){
 			
@@ -752,7 +756,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 				 String color = rs.getString("c4");
 				 String engine = rs.getString("c5");
 				 int displacement = rs.getInt("n2");
-				 System.out.println(rs.getString("c6"));
 				 Date shopDay = new Date(simpleDateFormat.parse(rs.getString("c6")).getTime());
 				 String status = rs.getString("c7");
 				 String drivingLicense=rs.getString("c8");
@@ -802,6 +805,149 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		
 		return vehiculos;
+	}
+
+	
+	@Override	
+	public boolean addRent(Rent r,String DNI) {
+		// TODO Auto-generated method stub
+		
+		boolean added = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{?= call GESTIONALQUILER.insertarAlquiler(?,?,?,?,?,?)}";
+		
+		System.out.println(query);
+		
+		try (Connection con = ds.getConnection();
+				CallableStatement cstmt = con.prepareCall(query);) {
+		
+			
+			int pos = 0;
+			
+
+			cstmt.setInt(++pos, r.getIdAlquiler());
+			cstmt.setInt(++pos, r.getIdFactura());
+			cstmt.setString(++pos, DNI);
+			cstmt.setString(++pos, r.getMatricula());
+			cstmt.setDate(++pos, r.getfInicio());
+			cstmt.setDate(++pos, r.getfFin());
+			cstmt.setInt(++pos, r.getIdAlquiler());
+
+		
+
+			
+			added = (cstmt.executeUpdate() == 1) ? true : false;
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+			
+		} 
+		
+		return added;
+		
+	}
+
+	@Override
+	public boolean deleteRent(Rent r) {
+		// TODO Auto-generated method stub
+		boolean delete = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{ call GESTIONALQUILER.bajaAlquiler(?)";
+		
+			
+		try (Connection con = ds.getConnection();
+				CallableStatement cstmt = con.prepareCall(query);) {
+			
+			System.out.println(r.getIdAlquiler());
+			cstmt.setInt(1, r.getIdAlquiler());
+			
+			delete = (cstmt.executeUpdate() == 1) ? true : false;
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		return delete;
+		
+		
+	}
+
+	@Override
+	public boolean addInvoice(Rent r, String dni) {
+		// TODO Auto-generated method stub
+		
+		boolean added = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{?= call GESTIONALQUILER.insertarAlquiler(?,?,?,?,?,?)}";
+		
+		System.out.println(query);
+		
+		try (Connection con = ds.getConnection();
+				CallableStatement cstmt = con.prepareCall(query);) {
+		
+			
+			int pos = 0;
+			
+
+			cstmt.setInt(++pos, r.getIdAlquiler());
+			cstmt.setNull(++pos, r.getIdFactura());
+			cstmt.setString(++pos, dni);
+			cstmt.setString(++pos, r.getMatricula());
+			cstmt.setDate(++pos, r.getfInicio());
+			cstmt.setDate(++pos, r.getfFin());
+			cstmt.setInt(++pos, r.getIdAlquiler());
+
+		
+
+			
+			added = (cstmt.executeUpdate() == 1) ? true : false;
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+			
+		} 
+		
+		return added;
+	
+	}
+
+	@Override
+	public boolean check(int idfactura) {
+		// TODO Auto-generated method stub
+		boolean check = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{call GESTIONALQUILER.facturacobrada(?)}";
+		
+		System.out.println(query);
+		
+		try (Connection con = ds.getConnection();
+				CallableStatement cstmt = con.prepareCall(query);) {
+		
+
+			cstmt.setInt(1, idfactura);
+		
+			
+			check = (cstmt.executeUpdate() == 1) ? true : false;
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+			
+		} 
+		
+		return check;
 	}
 
 

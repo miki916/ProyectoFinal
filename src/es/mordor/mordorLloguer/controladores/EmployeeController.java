@@ -35,6 +35,7 @@ public class EmployeeController implements ActionListener, TableModelListener{
 	private JIFAddEmployee vistaAddEmpleados;
 	private AlmacenDatosDB almacenDatos;
 	private MyTableModel mtm;
+	private JIFCargar vistaCargar;
 	private EmployeeController controlador;
 	
 	public EmployeeController(JIFEmployees vistaEmpleados, AlmacenDatosDB almacenDatos) {
@@ -205,6 +206,8 @@ public class EmployeeController implements ActionListener, TableModelListener{
 			@Override
 			protected Boolean doInBackground() throws Exception {
 				
+				vistaCargar.setVisible(true);
+				
 				try{
 					
 					if(!isCancelled())
@@ -245,7 +248,8 @@ public class EmployeeController implements ActionListener, TableModelListener{
 						mtm.addTableModelListener(controlador);
 						
 						
-						
+						vistaCargar.doDefaultCloseAction();
+
 					}catch(Exception e) {
 						
 						e.printStackTrace();
@@ -262,6 +266,12 @@ public class EmployeeController implements ActionListener, TableModelListener{
 			}
 			
 		};
+		
+		vistaCargar=new JIFCargar(task);
+		MainController.addJIF(vistaCargar);
+		
+		vistaCargar.getLblTask().setText("Cargando tabla de empleados");
+		
 		
 		task.execute();
 	

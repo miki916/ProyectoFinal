@@ -38,6 +38,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 	private MyVehicleTableModel mtmTruck;
 	private MyVehicleTableModel mtmMiniBus;
 	private JIFAddVehicle vistaJIFVehicle;
+	private JIFCargar vistaCargar;
 	private VehiclesController controller;
 	private ArrayList<Car> cars = new ArrayList<Car>();
 	private ArrayList<Van> vans = new ArrayList<Van>();
@@ -304,7 +305,6 @@ public class VehiclesController implements ActionListener, TableModelListener {
 
 	}
 	
-	
 	private ArrayList<Vehicle> arrayListF(ArrayList<Vehicle> vehicle, JPVehicles JPv) {
 		
 		ArrayList<Vehicle> result;
@@ -319,7 +319,6 @@ public class VehiclesController implements ActionListener, TableModelListener {
 		return result;
 	}
 				
-	
 	private void removeRow() {
 		// TODO Auto-generated method stub
 		
@@ -379,7 +378,6 @@ public class VehiclesController implements ActionListener, TableModelListener {
 				
 	}
 		
-	
 	private void update() {
 		// TODO Auto-generated method stub
 		
@@ -388,6 +386,8 @@ public class VehiclesController implements ActionListener, TableModelListener {
 			@Override
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
+				
+				vistaCargar.setVisible(true);
 				
 				try {
 					
@@ -407,7 +407,8 @@ public class VehiclesController implements ActionListener, TableModelListener {
 						
 						miniBus = (ArrayList<Minibus>) almacenDatos.getVehicles("MICROBUS").stream()
 								 																  .map((v)->(Minibus)v)
-								 																  .collect(Collectors.toList());						
+								 																  .collect(Collectors.toList());
+						
 					}
 					
 				}catch(Exception e) {
@@ -424,12 +425,14 @@ public class VehiclesController implements ActionListener, TableModelListener {
 					
 					try {
 						
+										
 						for(Component c : vista.getTabbedPane().getComponents()) {
 							
 							
 							if(c instanceof JPVehicles) {
 							
 								((JPVehicles) c).getTable().setDefaultEditor(Date.class, new WebDateEditor());
+						
 								
 							}
 							
@@ -462,6 +465,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 						vehicles = (ArrayList<Vehicle>) miniBus.stream().map((v)->(Vehicle)v).collect(Collectors.toList());
 						setComboBoxes(vehicles, vista.getPanelMiniBus());
 																					
+						vistaCargar.doDefaultCloseAction();
 						
 					}catch(Exception e) {
 						 
@@ -495,6 +499,11 @@ public class VehiclesController implements ActionListener, TableModelListener {
 			}
 		};
 		
+		vistaCargar=new JIFCargar(task);
+		MainController.addJIF(vistaCargar);
+		
+		vistaCargar.getLblTask().setText("Cargando vista de facturas");
+		
 		task.execute();
 		
 	}
@@ -511,11 +520,7 @@ public class VehiclesController implements ActionListener, TableModelListener {
 			MyTruckTableModel mtmTruck = (MyTruckTableModel) vista.getPanelTruck().getTable().getModel();
 			MyMinibusTableModel mtmMinibus = (MyMinibusTableModel) vista.getPanelMiniBus().getTable().getModel();
 
-			
-			Car car = mtmCar.getElement(e.getFirstRow());
-			Van van = mtmVan.getElement(e.getFirstRow());
-			Truck truck = mtmTruck.getElement(e.getFirstRow());
-			Minibus miniBus = mtmMinibus.getElement(e.getFirstRow());
+				
 
 			SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
 				
@@ -526,11 +531,31 @@ public class VehiclesController implements ActionListener, TableModelListener {
 					try {
 						
 						if(!isCancelled()) {
+							
+							int index = vista.getTabbedPane().getSelectedIndex();
+							
+							if(index == 0) {
+								
+								Car car = mtmCar.getElement(e.getFirstRow());
+								almacenDatos.updateVehicles(car);
+								
+							}else if(index == 1) {
+								
+								Van van = mtmVan.getElement(e.getFirstRow());
+								almacenDatos.updateVehicles(van);
 
-							almacenDatos.updateVehicles(car);
-							almacenDatos.updateVehicles(van);
-							almacenDatos.updateVehicles(truck);
-							almacenDatos.updateVehicles(miniBus);							
+							}else if(index == 2) {
+								
+								Truck truck = mtmTruck.getElement(e.getFirstRow());
+								almacenDatos.updateVehicles(truck);
+
+							}else if(index == 3) {
+								
+								Minibus miniBus = mtmMinibus.getElement(e.getFirstRow());
+								almacenDatos.updateVehicles(miniBus);	
+								
+							}
+														
 						}
 							
 						

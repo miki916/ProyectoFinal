@@ -27,9 +27,12 @@ public interface AlmacenDatosDB {
 	public boolean deleteVehicles(String  table, Vehicle v);
 	
 	public ArrayList<Invoice> getInvoice();
-
 	public boolean authenticate (String login,String password);
 	public ArrayList<Rent> getRent();
+	public boolean addRent(Rent r,String DNI);
+	public boolean deleteRent(Rent r);
+	public boolean addInvoice(Rent r, String dni);
+	public boolean check(int idfactura);
 	
 	
 	

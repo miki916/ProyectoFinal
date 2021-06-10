@@ -29,6 +29,7 @@ public class CustomerController implements ActionListener, TableModelListener {
 	private AlmacenDatosDB almacenDatos;
 	private JIFAddCustomer vistaAddCustomer;
 	private MyTableModel mtm;
+	private JIFCargar vistaCargar;
 	private ArrayList<Customer> customers = new ArrayList<Customer>();
 	private CustomerController controlador;
 	
@@ -49,6 +50,7 @@ public class CustomerController implements ActionListener, TableModelListener {
 		vista.getBtnRemove().addActionListener(this);
 		vista.getBtnPrint().addActionListener(this);
 		vista.getComboBox().addActionListener(this);
+		
 		
 		vista.getTextFieldDni().getDocument().addDocumentListener((SimpleDocumentListener) e -> {
 
@@ -237,7 +239,7 @@ public class CustomerController implements ActionListener, TableModelListener {
 			@Override
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
-				
+				vistaCargar.setVisible(true);
 				try {
 					
 					if(!isCancelled()) {
@@ -281,7 +283,8 @@ public class CustomerController implements ActionListener, TableModelListener {
 						mtm.addTableModelListener(controlador);
 						
 						
-						
+						vistaCargar.doDefaultCloseAction();
+
 					}catch(Exception e) {
 						
 						e.printStackTrace();
@@ -299,6 +302,12 @@ public class CustomerController implements ActionListener, TableModelListener {
 			
 			
 		};
+		
+		vistaCargar=new JIFCargar(task);
+		MainController.addJIF(vistaCargar);
+		
+		vistaCargar.getLblTask().setText("Cargando Tabla de clientes");
+		
 		task.execute();
 		
 	}

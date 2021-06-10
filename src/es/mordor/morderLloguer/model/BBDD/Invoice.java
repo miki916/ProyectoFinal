@@ -1,6 +1,6 @@
 package es.mordor.morderLloguer.model.BBDD;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Invoice {
 	

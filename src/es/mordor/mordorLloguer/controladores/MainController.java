@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import es.mordor.morderLloguer.model.BBDD.*;
+import es.mordor.mordorLloguer.config.MyConfig;
 import es.mordor.mordorLloguer.controladores.CustomerController.MyTableModelCustomer;
 import es.mordor.mordorLloguer.tableModel.MyVehicleTableModel;
 import es.mordor.mordorLloguer.vistas.*;
@@ -25,6 +26,7 @@ public class MainController implements ActionListener{
 	private JIFCustomer vistaClientes;
 	private JIFVehicles vistaVehiculos;
 	private JIFInvoice vistaFacturas;
+	private JFPreferencias vistaPreferencias;
 	private EmployeeController controladorEmpleados;
 	private CustomerController controladorClientes;
 	private VehiclesController controladorVehiculos;
@@ -58,14 +60,15 @@ public class MainController implements ActionListener{
 		vista.getBtnClientes().addActionListener(this);
 		vista.getBtnRent().addActionListener(this);
 		vista.getBtnFacturas().addActionListener(this);
+		vista.getMntmPreferences().addActionListener(this);
 
-		
 		vista.getBtnLogin().setActionCommand("AbrirLogin");
 		vista.getBtnLogOut().setActionCommand("Logout");
 		vista.getBtnEmpleados().setActionCommand("AbrirEmpleados");
 		vista.getBtnClientes().setActionCommand("OpenClients");
 		vista.getBtnRent().setActionCommand("OpenRent");
 		vista.getBtnFacturas().setActionCommand("Invoice");
+		vista.getMntmPreferences().setActionCommand("Preferences");
 
 
 		
@@ -87,35 +90,43 @@ public class MainController implements ActionListener{
 		String command = e.getActionCommand();
 		
 		
-		if(command == "AbrirLogin") {
+		if(command.equals("AbrirLogin")) {
 			
 			abrirLogin();
 			
-		}else if(command == "Login") {
+		}else if(command.equals("Login")) {
 			
 			login();			
 			
-		}else if(command == "Logout") {
+		}else if(command.equals("Logout")) {
 			
 			logout();
 			
-		}else if(command == "AbrirEmpleados") {
+		}else if(command.equals( "AbrirEmpleados")) {
 			
 			openJIFEmpleados();
 			
-		}else if(command == "OpenClients") {
+		}else if(command.equals("OpenClients")) {
 			
 			openJIFClientes();
 			
-		}else if(command == "OpenRent") {
+		}else if(command.equals("OpenRent")) {
 			
 			openJIFRent();
 			
-		}else if(command == "Invoice") {
+		}else if(command.equals( "Invoice")) {
 			
 			openJIFInvoice();
 			
-		}
+		}else if (command.equals("Preferences")) {
+			
+			crearPreferencias();
+			
+		}else if (command.equals("RegistrarDatosOracle")) 
+			cambiarDatosProperties();
+		
+		else if(command.equals("Cancel"))
+			vistaPreferencias.dispose();
 		
 		
 	}
@@ -288,8 +299,6 @@ public class MainController implements ActionListener{
 		
 	}
 
-
-
 	private void abrirLogin() {
 		// TODO Auto-generated method stub
 		
@@ -307,12 +316,58 @@ public class MainController implements ActionListener{
 		
 	}
 	
+
+	private void cambiarDatosProperties() {
+		
+		String cadena="";
+		char[] c = vistaPreferencias.getTextFieldPassword().getPassword();
+		
+		for(int i=0;i<c.length;i++) {
+			cadena+=c[(char)i];
+		}
+		
+		MyConfig.getInstancia().setOracleDriver(vistaPreferencias.getTextFieldDriver().getText());
+		MyConfig.getInstancia().setOracleURL(vistaPreferencias.getTextFieldURL().getText());
+		MyConfig.getInstancia().setOracleUsername(vistaPreferencias.getTextFieldUser().getText());
+		MyConfig.getInstancia().setOraclePassword(cadena);
+		
+		
+	}
+
+	private void crearPreferencias() {
+		
+		if(!open(vistaPreferencias)) {
+			
+			vistaPreferencias= new JFPreferencias();
+			
+			addJIF(vistaPreferencias);
+			vistaPreferencias.getTextFieldDriver().setText(MyConfig.getInstancia().getOracleDriver());
+			vistaPreferencias.getTextFieldURL().setText(MyConfig.getInstancia().getOracleURL());
+			vistaPreferencias.getTextFieldUser().setText(MyConfig.getInstancia().getOracleUsername());
+			vistaPreferencias.getTextFieldPassword().setText(MyConfig.getInstancia().getOraclePassword());
+			
+			vistaPreferencias.getBtnSave().addActionListener(this);
+			vistaPreferencias.getBtnCancelar().addActionListener(this);
+			
+			vistaPreferencias.getBtnSave().setActionCommand("RegistrarDatosOracle");
+			vistaPreferencias.getBtnCancelar().setActionCommand("Cancel");
+
+			
+		}else {
+			
+			JOptionPane.showMessageDialog(vista, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
+			
+		}
+		
+		
+	}
+	
+	
 	public static void center(JInternalFrame jif) {
 		Dimension deskSize=vista.getDesktopPane().getSize();
 		Dimension ifSize=jif.getSize();
 		jif.setLocation((deskSize.width - ifSize.width) / 2,(deskSize.height-ifSize.height)/ 2);
 	}
-
 	
 	static void addJIF(JInternalFrame jif) {
 		vista.getDesktopPane().add(jif);

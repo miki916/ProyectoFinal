@@ -8,10 +8,13 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JDesktopPane;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -25,7 +28,9 @@ public class JFMain extends JFrame {
 	private JButton btnClientes;
 	private JButton btnRent;
 	private JButton btnFacturas;
-
+	private JMenu mnEdit;
+	private JMenuItem mntmPreferences;
+	
 	/**
 	 * Create the frame.
 	 */
@@ -36,6 +41,11 @@ public class JFMain extends JFrame {
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
+				
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		btnLogin = new JButton("");
 		btnLogin.setIcon(new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/login.png")));
@@ -62,6 +72,14 @@ public class JFMain extends JFrame {
 		btnFacturas = new JButton("Facturas");
 		btnFacturas.setIcon(new ImageIcon(JFMain.class.getResource("/es/mordor/mordorLloguer/recursos/invoice.png")));
 		menuBar.add(btnFacturas);
+		 menuBar.add(Box.createGlue());
+		 
+		mnEdit = new JMenu("Edit");
+		menuBar.add(mnEdit);
+		
+		mntmPreferences = new JMenuItem("Preferences");
+		mnEdit.add(mntmPreferences);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -85,7 +103,15 @@ public class JFMain extends JFrame {
 	    return resizedImg;
 	}
 	
-	
+		
+	public JMenu getMnEdit() {
+		return mnEdit;
+	}
+
+	public JMenuItem getMntmPreferences() {
+		return mntmPreferences;
+	}
+
 	public JButton getBtnFacturas() {
 		return btnFacturas;
 	}
