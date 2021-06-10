@@ -60,9 +60,7 @@ public class MyRentTableModel extends MyTableModel<Rent> {
 		switch(col) {
 		
 			case 0: return data.get(row).getMatricula();
-			case 1: 
-				
-					return obtenerModelo(data.get(row).getMatricula());
+			case 1:	return obtenerModelo(data.get(row).getMatricula());
 					
 			case 2: return data.get(row).getPrecio();
 			case 3: return data.get(row).getfInicio();
@@ -79,11 +77,15 @@ public class MyRentTableModel extends MyTableModel<Rent> {
 		
 		String modelo = null;
 		
-		Optional<Vehicle> ve = dataV.stream().filter(v-> v.getDrivingLicense().toLowerCase().equals(matricula.toLowerCase())).findFirst();
+		Optional<Vehicle> ve = dataV.stream()
+							.filter(v-> v.getRegistration().toLowerCase().equals(matricula.toLowerCase()))
+							.findFirst();
 		
 		
 		if(ve.isPresent())
 			modelo = ve.get().getModel();
+		
+		
 		return modelo;
 	}
 

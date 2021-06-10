@@ -36,6 +36,7 @@ public class InvoiceController implements ActionListener, TableModelListener{
 	private ArrayList<Invoice> facturas;
 	private ArrayList<Customer> listC;
 	private int index = 0;
+	private InvoiceController controller;
 	private ArrayList<Vehicle> listV;
 	private ArrayList<Rent> alquilerFinal;
 		
@@ -45,8 +46,9 @@ public class InvoiceController implements ActionListener, TableModelListener{
 		this.vista = vista;
 		alquileres = new ArrayList<Rent>();
 		facturas = new ArrayList<Invoice>();
-		
+		listV = new ArrayList<Vehicle>();
 		listC = new ArrayList<Customer>();
+		controller = this;
 		inicializar();
 	}
 
@@ -333,7 +335,7 @@ public class InvoiceController implements ActionListener, TableModelListener{
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
 				vistaCargar.setVisible(true);
-				listV = new ArrayList<Vehicle>();
+				
 				
 				try {
 					
@@ -371,10 +373,10 @@ public class InvoiceController implements ActionListener, TableModelListener{
 						btnEnabled();
 						fillValues();
 						vista.getTableDetalles().setDefaultEditor(Date.class, new WebDateEditor());
-
 						mtm = new MyRentTableModel(getRent(facturas.get(index)), listV);						
 						vista.getTableDetalles().setModel(mtm);
 						
+						mtm.addTableModelListener(controller);
 						vistaCargar.doDefaultCloseAction();
 						
 					}catch(Exception e) {
@@ -453,9 +455,7 @@ public class InvoiceController implements ActionListener, TableModelListener{
 				protected Boolean doInBackground() throws Exception {
 					// TODO Auto-generated method stub
 					try {
-						
-						System.out.println("Pepep");
-						
+												
 						if(!isCancelled())
 							almacenDatos.updateRent(r);
 						

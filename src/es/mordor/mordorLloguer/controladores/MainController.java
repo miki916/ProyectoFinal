@@ -330,6 +330,8 @@ public class MainController implements ActionListener{
 		MyConfig.getInstancia().setOracleURL(vistaPreferencias.getTextFieldURL().getText());
 		MyConfig.getInstancia().setOracleUsername(vistaPreferencias.getTextFieldUser().getText());
 		MyConfig.getInstancia().setOraclePassword(cadena);
+		vistaPreferencias.dispose();
+
 		
 		
 	}

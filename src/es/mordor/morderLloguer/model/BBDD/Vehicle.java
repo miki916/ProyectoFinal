@@ -123,6 +123,15 @@ public abstract class Vehicle {
 	public void setDrivingLicense(String drivingLicense) {
 		this.drivingLicense = drivingLicense;
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "Vehicle [registration=" + registration + ", dayPrice=" + dayPrice + ", model=" + model + ", color="
+				+ color + ", engine=" + engine + ", displacement=" + displacement + ", shopDay=" + shopDay + ", status="
+				+ status + ", drivingLicense=" + drivingLicense + "]";
+	}
 	
 	
 	

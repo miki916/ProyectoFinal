@@ -166,7 +166,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return getCustomEmpleados(null);
 	}
 	
-
 	@Override
 	public Employee getEmployeeByDNI(String dni) {
 		// TODO Auto-generated method stub
