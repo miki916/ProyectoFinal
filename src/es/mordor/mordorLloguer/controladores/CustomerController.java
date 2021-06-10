@@ -3,6 +3,7 @@ package es.mordor.mordorLloguer.controladores;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -169,21 +170,27 @@ public class CustomerController implements ActionListener, TableModelListener {
 			@Override
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
+				String pattern = "yyyy-MM-dd";
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 				
 				String DNI = vistaAddCustomer.getTextFieldDni().getText();
 				String name = vistaAddCustomer.getTextFieldName().getText();
 				String apellidos = vistaAddCustomer.getTextFieldSurname().getText();
 				String CP = vistaAddCustomer.getTextFieldCP().getText();
 				String email = vistaAddCustomer.getTextFieldEmail().getText();
-				String fecha = vistaAddCustomer.getDateTextField().getDate().toString();
+				Date fecha = new java.sql.Date(simpleDateFormat.parse(vistaAddCustomer.getDateTextField().getDate().toString()).getTime());
 				String carnet = (String) vistaAddCustomer.getComboBox().getSelectedItem();
 				String domicilio = vistaAddCustomer.getTextFieldAddress().getText();
+				
+				System.out.println(fecha);
 				Boolean error = false;
 				
 					try {
-														
-						String[] data = {DNI,name,apellidos,domicilio,CP,email,fecha,carnet};		
-						error = almacenDatos.addCustomer(data);
+						
+												
+						Customer c = new Customer(DNI,name,apellidos,domicilio,CP,email,fecha,carnet);		
+						error = almacenDatos.addCustomer(c);
+						mtm.addElementAtRow(c);
 						
 					}catch(Exception e) {
 						

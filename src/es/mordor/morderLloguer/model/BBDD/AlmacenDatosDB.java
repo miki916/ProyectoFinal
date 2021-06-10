@@ -18,7 +18,7 @@ public interface AlmacenDatosDB {
 	
 	public boolean deleteCustomer(String dni);
 	public ArrayList<Customer> getCustomer();
-	public boolean addCustomer(String[] data);
+	public boolean addCustomer(Customer c);
 	public boolean updateCustomer(Customer cliente); 
 	
 	public ArrayList<Vehicle> getVehicles(String table);

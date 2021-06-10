@@ -28,6 +28,19 @@ public class Customer {
 		this.fechaNac = fechaNac;
 		this.carnet = carnet;
 	}
+	
+	public Customer(String dNI, String name, String surname, String address, String cP, String email,
+			Date fechaNac, String carnet) {
+		super();
+		DNI = dNI;
+		this.name = name;
+		this.surname = surname;
+		this.address = address;
+		CP = cP;
+		this.email = email;
+		this.fechaNac = fechaNac;
+		this.carnet = carnet;
+	}
 
 
 	public int getIdCliente() {

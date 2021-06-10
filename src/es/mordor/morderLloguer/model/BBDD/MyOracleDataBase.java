@@ -326,33 +326,35 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	}
 
 	@Override
-	public boolean addCustomer(String[] data) {
+	public boolean addCustomer(Customer c) {
 		
 		boolean añadido = false;		
 
-		DataSource ds = MyDataSource.getOracleDataSource();
-
-		try (Connection con = ds.getConnection();
-				Statement stmt = con.createStatement();){
-			
-			
-			String query = "insert into cliente(DNI, nombre, apellidos, domicilio, CP, email, fechaNac, carnet) VALUES"
-                    + "('"+ data[0] +"','" + data[1] +"', '"+ data[2] +"', '"+ data[3] +"', '"+ data[4] +"', '"+data[5]+"', TO_DATE('"+ data[6] +"','yyyy/mm/dd'), '"+data[7]+"')";
-
-			
-			System.out.println(query);
-			
-			if(stmt.executeUpdate(query)==1)
-				añadido=true;
+		String query = 	"{call GESTIONALQUILER.grabarcliente(?,?,?,?,?,?,?,?)}";
 		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		
+		try (Connection con = ds.getConnection();
+				CallableStatement cs = con.prepareCall(query);) {
+					
+			cs.setString(1,c.getDNI());
+			cs.setString(2, c.getName());
+			cs.setString(3,c.getSurname());
+			cs.setString(4,c.getAddress());
+			cs.setString(5,c.getCP());
+			cs.setString(6, c.getEmail());
+			cs.setDate(7, c.getFechaNac());
+			cs.setString(8, c.getCarnet());
+			
+			añadido = (cs.executeUpdate() == 1) ? true : false;
+			
 		} catch (SQLException e) {
-			
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-
-			
 		}
 		
-		
+			
 		return añadido;
 	}
 
@@ -907,7 +909,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 			cstmt.setInt(++pos, r.getIdAlquiler());
 
 		
-
 			
 			added = (cstmt.executeUpdate() == 1) ? true : false;
 			
