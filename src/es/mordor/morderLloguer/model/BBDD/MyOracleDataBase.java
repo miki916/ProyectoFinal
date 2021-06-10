@@ -301,28 +301,27 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 	public boolean deleteCustomer(String dni) {
 		// TODO Auto-generated method stub
 		
-		boolean eliminado = false;
+		boolean delete = false;
 		
 		DataSource ds = MyDataSource.getOracleDataSource();
 		
-		try(Connection con = ds.getConnection();
-				Statement st = con.createStatement()){
+		String query = "{ call GESTIONALQUILER.bajaCliente(?)}";
+		
 			
-			String query="DELETE FROM CLIENTE WHERE DNI= '" + dni + "'";
+		try (Connection con = ds.getConnection();
+				CallableStatement cstmt = con.prepareCall(query);) {
 			
-			if(st.executeUpdate(query) == 1) {
-				
-				eliminado = true;
-			}
+			cstmt.setString(1, dni);
 			
+			delete = (cstmt.executeUpdate() == 1) ? true : false;
 			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+		}catch(SQLException e) {
+			
 			e.printStackTrace();
+			
 		}
 		
-		
-		return eliminado;
+		return delete;
 	}
 
 	@Override
@@ -337,7 +336,7 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		
 		try (Connection con = ds.getConnection();
 				CallableStatement cs = con.prepareCall(query);) {
-					
+			
 			cs.setString(1,c.getDNI());
 			cs.setString(2, c.getName());
 			cs.setString(3,c.getSurname());
@@ -392,7 +391,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return actualizado;
 		
 	}
-
 
 	@Override
 	public boolean updateVehicles(Vehicle v) {
@@ -809,7 +807,6 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		return vehiculos;
 	}
 
-	
 	@Override	
 	public boolean addRent(Rent r,String DNI) {
 		// TODO Auto-generated method stub
@@ -949,6 +946,37 @@ public class MyOracleDataBase implements AlmacenDatosDB {
 		} 
 		
 		return check;
+	}
+
+	@Override
+	public boolean updateRent(Rent r) {
+		// TODO Auto-generated method stub
+		boolean added = false;
+		
+		DataSource ds = MyDataSource.getOracleDataSource();
+		
+		String query = "{call GESTIONALQUILER.modificarAlquiler(?,?,?)}";
+		
+		System.out.println(query);
+		
+		try (Connection con = ds.getConnection();
+				CallableStatement cstmt = con.prepareCall(query);) {
+		
+			
+			int pos = 0;
+			cstmt.setInt(++pos, r.getIdAlquiler());
+			cstmt.setDate(++pos, r.getfInicio());
+			cstmt.setDate(++pos, r.getfFin());
+
+			added = (cstmt.executeUpdate() == 1) ? true : false;
+			
+		}catch(SQLException e) {
+			
+			e.printStackTrace();
+			
+		} 
+		
+		return added;
 	}
 
 

@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+import com.alee.laf.table.editors.WebDateEditor;
 
 import es.mordor.morderLloguer.model.BBDD.*;
 import es.mordor.mordorLloguer.controladores.*;
@@ -21,7 +25,7 @@ import es.mordor.mordorLloguer.controladores.CustomerController.MyTableModelCust
 import es.mordor.mordorLloguer.tableModel.*;
 import es.mordor.mordorLloguer.vistas.*;
 
-public class InvoiceController implements ActionListener{
+public class InvoiceController implements ActionListener, TableModelListener{
 
 	
 	private AlmacenDatosDB almacenDatos;
@@ -41,7 +45,7 @@ public class InvoiceController implements ActionListener{
 		this.vista = vista;
 		alquileres = new ArrayList<Rent>();
 		facturas = new ArrayList<Invoice>();
-		listV = new ArrayList<Vehicle>();
+		
 		listC = new ArrayList<Customer>();
 		inicializar();
 	}
@@ -49,6 +53,8 @@ public class InvoiceController implements ActionListener{
 	private void inicializar() {
 		// TODO Auto-generated method stub
 		
+		
+	
 		vista.getBtnPreviousInvoice().setEnabled(false);
 		
 		vista.getBtnNextInvoice().addActionListener(this);
@@ -57,6 +63,7 @@ public class InvoiceController implements ActionListener{
 		vista.getBtnRemoveDetail().addActionListener(this);
 		vista.getBtnNewInvoce().addActionListener(this);
 		vista.getBtnCheck().addActionListener(this);
+		vista.getBtnRemoveInvoice().addActionListener(this);
 		
 		vista.getBtnNextInvoice().setActionCommand("Next");
 		vista.getBtnPreviousInvoice().setActionCommand("Previous");
@@ -64,6 +71,7 @@ public class InvoiceController implements ActionListener{
 		vista.getBtnRemoveDetail().setActionCommand("RemoveDetail");
 		vista.getBtnNewInvoce().setActionCommand("AddInvoice");
 		vista.getBtnCheck().setActionCommand("Check");
+		vista.getBtnRemoveInvoice().setActionCommand("RemoveInvoice");
 
 
 		
@@ -100,10 +108,36 @@ public class InvoiceController implements ActionListener{
 		else if(command.equals("Check"))
 			check();
 		
+		else if(command.equals("RemoveInvoice"))
+			removeInvoice();
+		
 		
 	}
 
 	
+
+	private void removeInvoice() {
+		// TODO Auto-generated method stub
+		
+		try {
+			
+			for(Rent r: alquilerFinal) {
+				
+				almacenDatos.deleteRent(r);
+				
+			}
+			
+			facturas.remove(index);
+			fillOracle();	
+
+			
+		}catch(Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+	}
 
 	private void check() {
 		// TODO Auto-generated method stub
@@ -129,18 +163,20 @@ public class InvoiceController implements ActionListener{
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
 				int idcliente = Integer.parseInt(JOptionPane.showInputDialog("Añadir id de cliente"));
+				String matricula = JOptionPane.showInputDialog("Añadir Matricula");
 				String pattern = "dd/MM/yy";
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 				Date date=  new java.sql.Date(simpleDateFormat.parse("09/06/2040").getTime());
 				Customer customer = null;
 
 				for(Customer v : listC) {
-					
+					System.out.println(v);
 					if(v.getIdCliente() == idcliente)
 						
 						customer = v;
 					
 				}
+				System.out.println(customer);
 				
 							
 				
@@ -148,7 +184,7 @@ public class InvoiceController implements ActionListener{
 					
 					if(!isCancelled()) {
 						
-						Rent r = new Rent(mtm.getRowCount()+1, "0000AAA", date , date);
+						Rent r = new Rent(mtm.getRowCount()+1, matricula, date , date);
 						almacenDatos.addInvoice(r, customer.getDNI());
 						fillOracle();
 						
@@ -181,8 +217,8 @@ public class InvoiceController implements ActionListener{
 			int row = vista.getTableDetalles().getSelectedRow();
 			Rent r =  mtm.getElement(row);
 			almacenDatos.deleteRent(r);
-			mtm.removeElement(r);
-			alquileres.remove(r);
+			fillOracle();	
+			
 			
 		}catch(Exception e) {
 			
@@ -208,13 +244,7 @@ public class InvoiceController implements ActionListener{
 				Vehicle vehicle ;
 				Customer customer = null;
 				
-				for(Vehicle v : listV) {
-					
-					if(v.getRegistration().equals(matricula))
-							vehicle = v;
-					
-				}
-				
+							
 				for(Customer v : listC) {
 					
 					if(v.getIdCliente() == facturas.get(index).getClienteid())
@@ -284,6 +314,14 @@ public class InvoiceController implements ActionListener{
 		else
 			vista.getBtnPreviousInvoice().setEnabled(true);
 		
+		
+		if(facturas.size() <= 1) {
+			
+			vista.getBtnPreviousInvoice().setEnabled(false);
+			vista.getBtnNextInvoice().setEnabled(false);
+
+		}
+		
 	}
 
  	private void fillOracle() {
@@ -295,6 +333,7 @@ public class InvoiceController implements ActionListener{
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
 				vistaCargar.setVisible(true);
+				listV = new ArrayList<Vehicle>();
 				
 				try {
 					
@@ -329,7 +368,10 @@ public class InvoiceController implements ActionListener{
 					
 					try {
 						
+						btnEnabled();
 						fillValues();
+						vista.getTableDetalles().setDefaultEditor(Date.class, new WebDateEditor());
+
 						mtm = new MyRentTableModel(getRent(facturas.get(index)), listV);						
 						vista.getTableDetalles().setModel(mtm);
 						
@@ -379,6 +421,9 @@ public class InvoiceController implements ActionListener{
 		
 		vista.getTxtFieldNumeroFactura().setText(String.valueOf(facturas.get(index).getIdfactura()));
 		vista.getWebDateFieldFechaFactura().setDate(facturas.get(index).getFecha());
+		vista.getTxtFieldSuma().setText(String.valueOf(facturas.get(index).getImportebase()));
+		vista.getTxtFieldImpuestos().setText(String.valueOf((facturas.get(index).getImportebase()-facturas.get(index).getImporteiva())));
+		vista.getTxtFieldTotal().setText(String.valueOf(facturas.get(index).getImporteiva()));
 		
 		for(Customer c : listC) {
 			
@@ -387,9 +432,48 @@ public class InvoiceController implements ActionListener{
 				vista.getTxtFieldNombre().setText(c.getName());
 				vista.getTxtFieldApellidos().setText(c.getSurname());
 				vista.getTxtFieldDNI().setText(c.getDNI());
+				
 							
 			}	
 		}		
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		
+		if(e.getType() == TableModelEvent.UPDATE) {
+		
+			MyRentTableModel mtm =  (MyRentTableModel) vista.getTableDetalles().getModel();
+			
+			Rent r = mtm.getElement(e.getFirstRow());
+		
+			SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
+			
+			@Override
+				protected Boolean doInBackground() throws Exception {
+					// TODO Auto-generated method stub
+					try {
+						
+						System.out.println("Pepep");
+						
+						if(!isCancelled())
+							almacenDatos.updateRent(r);
+						
+					}catch(Exception e) {
+						
+						e.printStackTrace();
+						
+					}
+					
+					return null;
+				}
+			
+			};
+		
+			task.execute();
+	
+		}
+		
 	}
 	
 	

@@ -33,6 +33,7 @@ public interface AlmacenDatosDB {
 	public boolean deleteRent(Rent r);
 	public boolean addInvoice(Rent r, String dni);
 	public boolean check(int idfactura);
+	public boolean updateRent(Rent r);
 	
 	
 	
