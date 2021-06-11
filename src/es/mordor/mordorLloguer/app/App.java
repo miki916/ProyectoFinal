@@ -1,4 +1,4 @@
-package es.mordor.mordorLloguer.app;	
+package es.mordor.mordorLloguer.app;
 
 import java.awt.EventQueue;
 
@@ -8,19 +8,17 @@ import es.mordor.morderLloguer.model.BBDD.*;
 import es.mordor.mordorLloguer.controladores.MainController;
 import es.mordor.mordorLloguer.vistas.JFMain;
 
-
 public class App {
 
-	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					WebLookAndFeel.install();
 					JFMain frame = new JFMain();
-					AlmacenDatosDB modelo=new MyOracleDataBase();
+					AlmacenDatosDB modelo = new MyOracleDataBase();
 
-					MainController c = new MainController(frame,modelo);
+					MainController c = new MainController(frame, modelo);
 					c.go();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -28,5 +26,5 @@ public class App {
 			}
 		});
 	}
-	
+
 }

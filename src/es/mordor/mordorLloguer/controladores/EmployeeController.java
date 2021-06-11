@@ -29,82 +29,79 @@ import es.mordor.morderLloguer.model.BBDD.*;
 import es.mordor.mordorLloguer.tableModel.MyTableModel;
 import es.mordor.mordorLloguer.vistas.*;
 
-public class EmployeeController implements ActionListener, TableModelListener{
-	
+public class EmployeeController implements ActionListener, TableModelListener {
+
 	private JIFEmployees vistaEmpleados;
 	private JIFAddEmployee vistaAddEmpleados;
 	private AlmacenDatosDB almacenDatos;
 	private MyTableModel mtm;
 	private JIFCargar vistaCargar;
 	private EmployeeController controlador;
-	
+
 	public EmployeeController(JIFEmployees vistaEmpleados, AlmacenDatosDB almacenDatos) {
-		
+
 		this.almacenDatos = almacenDatos;
 		this.vistaEmpleados = vistaEmpleados;
 		controlador = this;
-		
+
 		inicializar();
-		
+
 	}
-	
+
 	private void inicializar() {
-		
+
 		vistaEmpleados.getBtnAdd().addActionListener(this);
 		vistaEmpleados.getBtnRemove().addActionListener(this);
 		vistaEmpleados.getComboBoxOrder().addActionListener(this);
 		vistaEmpleados.getComboBoxSort().addActionListener(this);
-		
+
 		vistaEmpleados.getBtnAdd().setActionCommand("OpenNewEmpleado");
 		vistaEmpleados.getBtnRemove().setActionCommand("Remove");
 
 	}
-	
+
 	public void go() {
-		
+
 		MainController.addJIF(vistaEmpleados);
-		sort();		
+		fillOracle();
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+
 		String command = e.getActionCommand();
-		
-		if(command == "OpenNewEmpleado") {
-			
-			openAddEmpleado();
-		
-		}else if(command == "Remove") {
-			
+
+		if (command == "OpenNewEmpleado") {
+
+			openJIFAddEmployee();
+
+		} else if (command == "Remove") {
+
 			removeRow();
-			
-		}else if(command == "Cancel") {
-			
+
+		} else if (command == "Cancel") {
+
 			vistaAddEmpleados.dispose();
-			
-		}else if(command == "Add"){
-			
+
+		} else if (command == "Add") {
+
 			newEmpleado();
-			
-		}else
-			sort();
-		
-		
+
+		} else
+			fillOracle();
+
 	}
 
-
+	// Crea un nuevo empleado y lo añade en la base de datos
 	private void newEmpleado() {
 		// TODO Auto-generated method stub
-		
-		SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
-			
-		
-			
+
+		SwingWorker<Boolean, Void> task = new SwingWorker<Boolean, Void>() {
+
 			@Override
 			protected Boolean doInBackground() throws Exception {
 				// TODO Auto-generated method stub
-				
+
 				String DNI = vistaAddEmpleados.getTextFieldDni().getText();
 				String name = vistaAddEmpleados.getTextFieldName().getText();
 				String apellidos = vistaAddEmpleados.getTextFieldSurname().getText();
@@ -116,287 +113,282 @@ public class EmployeeController implements ActionListener, TableModelListener{
 				String password = String.valueOf(vistaAddEmpleados.getTextFieldPassword().getPassword());
 				Boolean error = false;
 				try {
-					
-													
-					String[] data = {DNI,name,apellidos,domicilio,CP,email,fecha,cargo,password};
-						
-					error = almacenDatos.addEmployee(data);
-					
-					
-				}catch(Exception e) {
-					
-					e.printStackTrace();
-					
-				}
-				
-				if(error) {
-					
-					sort();
-					JOptionPane.showMessageDialog(vistaEmpleados, "Empleado añadido correctamente", "Succes", JOptionPane.INFORMATION_MESSAGE);
-					vistaAddEmpleados.dispose();
-					
-				}else {
-					
-					JOptionPane.showMessageDialog(vistaEmpleados, "Error al añadir al empleado", "Error", JOptionPane.INFORMATION_MESSAGE);
 
-					
+					String[] data = { DNI, name, apellidos, domicilio, CP, email, fecha, cargo, password };
+
+					error = almacenDatos.addEmployee(data);
+
+				} catch (Exception e) {
+
+					e.printStackTrace();
+
 				}
-				
-		
-				
+
+				if (error) {
+
+					fillOracle();
+					JOptionPane.showMessageDialog(vistaEmpleados, "Empleado añadido correctamente", "Succes",
+							JOptionPane.INFORMATION_MESSAGE);
+					vistaAddEmpleados.dispose();
+
+				} else {
+
+					JOptionPane.showMessageDialog(vistaEmpleados, "Error al añadir al empleado", "Error",
+							JOptionPane.INFORMATION_MESSAGE);
+
+				}
+
 				return null;
 			}
-			
-			
-			
-			
+
 		};
 
 		task.execute();
-		
+
 	}
 
+	// Elimina el empleado seleccionado
 	private void removeRow() {
-		
-		 int input = JOptionPane.showConfirmDialog(null, "Estas seguro?", "Elige una opcion...",JOptionPane.YES_NO_OPTION);
 
-		
+		int input = JOptionPane.showConfirmDialog(null, "Estas seguro?", "Elige una opcion...",
+				JOptionPane.YES_NO_OPTION);
+
 		int row = vistaEmpleados.getTable().getSelectedRow();
 		Employee e = (Employee) mtm.getElement(row);
-		almacenDatos.deleteEmployee(e.getDNI());
+		try {
+			almacenDatos.deleteEmployee(e.getDNI());
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			if (e1.getErrorCode() == 20001)
+				JOptionPane.showMessageDialog(vistaEmpleados, "No existe un empleado con este dni", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			else
+				JOptionPane.showMessageDialog(vistaEmpleados, "error no esperado", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 		mtm.removeElement(e);
-		
+
 	}
 
-	private void openAddEmpleado() {
-				
-		if(!MainController.open(vistaAddEmpleados)) {
-			vistaAddEmpleados=new JIFAddEmployee();
+	// Abre el JIF de añadir empleados
+	private void openJIFAddEmployee() {
+
+		if (!MainController.open(vistaAddEmpleados)) {
+			vistaAddEmpleados = new JIFAddEmployee();
 			MainController.addJIF(vistaAddEmpleados);
-			
+
 			vistaAddEmpleados.getBtnCancel().addActionListener(this);
 			vistaAddEmpleados.getBtnAdd().addActionListener(this);
 
 			vistaAddEmpleados.getBtnAdd().setActionCommand("Add");
 			vistaAddEmpleados.getBtnCancel().setActionCommand("Cancel");
-				
-				
-		}else 			
-			JOptionPane.showMessageDialog(vistaEmpleados, "Esta ventana ya ha sido generada", "Error", JOptionPane.ERROR_MESSAGE);
-						
+
+		} else
+			JOptionPane.showMessageDialog(vistaEmpleados, "Esta ventana ya ha sido generada", "Error",
+					JOptionPane.ERROR_MESSAGE);
+
 	}
 
+	// Almacena los empleados de la base de datos en un ArrayList
+	private void fillOracle() {
 
-	private void sort() {
-		
 		int sortN;
-		
-		if(vistaEmpleados.getComboBoxSort().getSelectedItem() == "Ascendente") {
-			
+
+		if (vistaEmpleados.getComboBoxSort().getSelectedItem() == "Ascendente") {
+
 			sortN = 1;
-			
-		}else
-			
+
+		} else
+
 			sortN = 2;
-		
-		SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
-			
+
+		SwingWorker<Boolean, Void> task = new SwingWorker<Boolean, Void>() {
+
 			ArrayList<Employee> empleados;
-			
+
 			@Override
 			protected Boolean doInBackground() throws Exception {
-				
+
 				vistaCargar.setVisible(true);
-				
-				try{
-					
-					if(!isCancelled())
+
+				try {
+
+					if (!isCancelled())
 						empleados = almacenDatos.getEmployeeOrderBy(
 								((String) vistaEmpleados.getComboBoxOrder().getSelectedItem()), sortN);
-					
-				}catch(Exception e) {
-					
+
+				} catch (Exception e) {
+
 					e.printStackTrace();
-					
+
 				}
-				
+
 				return null;
 			}
-			
+
+			// Indicamos el mtm de la tabla y customizamos la tabla
 			protected void done() {
-				
-				if(!isCancelled()) {
-					
+
+				if (!isCancelled()) {
+
 					try {
-						
-						mtm=new MyTableModelEmpleados(empleados);
+
+						mtm = new MyTableModelEmpleados(empleados);
 						vistaEmpleados.getTable().setModel(mtm);
-						
+
 						vistaEmpleados.getTable().setDefaultEditor(Date.class, new WebDateEditor());
 
-							
 						JComboBox<String> combobox = new JComboBox<String>();
 						combobox.addItem("mecanico");
 						combobox.addItem("administrativo");
 						combobox.addItem("comercial");
 						combobox.addItem("gerente");
-						
+
 						TableColumn column = vistaEmpleados.getTable().getColumn("Cargo");
 						column.setCellEditor(new DefaultCellEditor(combobox));
-						
-											
+
 						mtm.addTableModelListener(controlador);
-						
-						
+
 						vistaCargar.doDefaultCloseAction();
 
-					}catch(Exception e) {
-						
+					} catch (Exception e) {
+
 						e.printStackTrace();
-						
+
 					}
-			
-					
-				}else {
-					
+
+				} else {
+
 					vistaEmpleados.dispose();
-					
+
 				}
-					
+
 			}
-			
+
 		};
-		
-		vistaCargar=new JIFCargar(task);
+
+		vistaCargar = new JIFCargar(task);
 		MainController.addJIF(vistaCargar);
-		
+
 		vistaCargar.getLblTask().setText("Cargando tabla de empleados");
-		
-		
+
 		task.execute();
-	
-		
+
 	}
-	
-	public class MyTableModelEmpleados extends MyTableModel<Employee>{
-		
-				
-		public MyTableModelEmpleados( List<Employee> data) {
-			super(Arrays.asList("DNI","Nombre","Apellidos","Domicilio","CP","Email","Nacimiento","Cargo"), data);
+
+	public class MyTableModelEmpleados extends MyTableModel<Employee> {
+
+		public MyTableModelEmpleados(List<Employee> data) {
+			super(Arrays.asList("DNI", "Nombre", "Apellidos", "Domicilio", "CP", "Email", "Nacimiento", "Cargo"), data);
 			// TODO Auto-generated constructor stub
 		}
-		
-		
+
 		public void setValueAt(Object value, int row, int col) {
-		
-			switch(col) {
-				
-				case 1:
-					data.get(row).setNombre(value.toString());
-					break;
-				case 2:
-					data.get(row).setApellidos(value.toString());
-					break;
-				case 3:
-					data.get(row).setDomicilio(value.toString());
-					break;
-				case 4:
-					data.get(row).setCP(value.toString());
-					break;
-				case 5:
-					data.get(row).setEmail(value.toString());
-					break;
-				case 6:
-					java.util.Date fecha=(java.util.Date)value;
-					 data.get(row).setFechaNac(new java.sql.Date(fecha.getTime()));
-					 break;
-				case 7:
-					data.get(row).setCargo(value.toString());
-					break;			
-					
-					
+
+			switch (col) {
+
+			case 1:
+				data.get(row).setNombre(value.toString());
+				break;
+			case 2:
+				data.get(row).setApellidos(value.toString());
+				break;
+			case 3:
+				data.get(row).setDomicilio(value.toString());
+				break;
+			case 4:
+				data.get(row).setCP(value.toString());
+				break;
+			case 5:
+				data.get(row).setEmail(value.toString());
+				break;
+			case 6:
+				java.util.Date fecha = (java.util.Date) value;
+				data.get(row).setFechaNac(new java.sql.Date(fecha.getTime()));
+				break;
+			case 7:
+				data.get(row).setCargo(value.toString());
+				break;
+
 			}
-			
-			fireTableCellUpdated(row,  col);
-	
+
+			fireTableCellUpdated(row, col);
+
 		}
 
 		@Override
 		public Object getValueAt(int row, int col) {
 			// TODO Auto-generated method stub
-			
-			switch(col) {
-			
-				case 0:
-					 return data.get(row).getDNI();				
-				case 1:
-					return data.get(row).getNombre();
-				case 2:
-					return data.get(row).getApellidos();
-				case 3:
-					return data.get(row).getDomicilio();
-				case 4:
-					return data.get(row).getCP();		
-				case 5:
-					return data.get(row).getEmail();
-				case 6:
-					return data.get(row).getFechaNac();
-				case 7:
-					return data.get(row).getCargo();
+
+			switch (col) {
+
+			case 0:
+				return data.get(row).getDNI();
+			case 1:
+				return data.get(row).getNombre();
+			case 2:
+				return data.get(row).getApellidos();
+			case 3:
+				return data.get(row).getDomicilio();
+			case 4:
+				return data.get(row).getCP();
+			case 5:
+				return data.get(row).getEmail();
+			case 6:
+				return data.get(row).getFechaNac();
+			case 7:
+				return data.get(row).getCargo();
 			}
-						
+
 			return null;
 		}
-		
+
 		public Class<?> getColumnClass(int colIndex) {
-			switch(colIndex) {
-			case 6: return Date.class;
-			default: return String.class;
+			switch (colIndex) {
+			case 6:
+				return Date.class;
+			default:
+				return String.class;
 			}
-			
+
 		}
-			
-		
+
 	}
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		// TODO Auto-generated method stub
-		
-		if(e.getType() == TableModelEvent.UPDATE) {
-			
+
+		if (e.getType() == TableModelEvent.UPDATE) {
+
 			MyTableModelEmpleados mtm = (MyTableModelEmpleados) vistaEmpleados.getTable().getModel();
-			
+
 			Employee empleado = mtm.getElement(e.getFirstRow());
-			
-			SwingWorker<Boolean,Void> task=new SwingWorker<Boolean,Void>(){
+
+			SwingWorker<Boolean, Void> task = new SwingWorker<Boolean, Void>() {
 
 				@Override
 				protected Boolean doInBackground() throws Exception {
 					// TODO Auto-generated method stub
-					
+
 					try {
-						
-						if(!isCancelled())
+
+						if (!isCancelled())
 							almacenDatos.updateEmployee(empleado);
-						
-					}catch(Exception e) {
-						
+
+					} catch (Exception e) {
+
 						e.printStackTrace();
-						
+
 					}
-					
+
 					return null;
 				}
-				
-				
-				
+
 			};
-			
+
 			task.execute();
-			
-			
+
 		}
-		
-	}	
+
+	}
 }

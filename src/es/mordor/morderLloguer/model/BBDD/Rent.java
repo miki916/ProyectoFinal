@@ -10,7 +10,7 @@ public class Rent {
 	private Date fInicio;
 	private Date fFin;
 	private float precio;
-	
+
 	public Rent(int idAlquiler, int idFactura, String matricula, Date fInicio, Date fFin, float precio) {
 		super();
 		this.idAlquiler = idAlquiler;
@@ -20,16 +20,15 @@ public class Rent {
 		this.fFin = fFin;
 		this.precio = precio;
 	}
-	
-	public  Rent(int idAlquiler, String matricula, Date fInicio, Date fFin) {
-		
-	
+
+	public Rent(int idAlquiler, String matricula, Date fInicio, Date fFin) {
+
 		this.idAlquiler = idAlquiler;
 		this.matricula = matricula;
 		this.fInicio = fInicio;
 		this.fFin = fFin;
 		precio = 0;
-		
+
 	}
 
 	public int getIdAlquiler() {
@@ -85,10 +84,5 @@ public class Rent {
 		return "Rent [idAlquiler=" + idAlquiler + ", idFactura=" + idFactura + ", matricula=" + matricula + ", fInicio="
 				+ fInicio + ", fFin=" + fFin + ", precio=" + precio + "]";
 	}
-	
-	
-	
-	
-	
-	
+
 }
